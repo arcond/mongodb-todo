@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>RequireJS</id>
+    <version>2.0.4.1</version>
+    <title>RequireJS</title>
+    <authors>James Burke</authors>
+    <owners>James Burke</owners>
+    <licenseUrl>https://github.com/jrburke/requirejs/blob/master/LICENSE</licenseUrl>
+    <projectUrl>http://requirejs.org/</projectUrl>
+    <iconUrl>http://requirejs.org/favicon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>RequireJS is a JavaScript file and module loader. It is optimized for in-browser use, but it can be used in other JavaScript environments, like Rhino and Node. 
+
+IE 6+ .......... compatible ✔
+Firefox 2+ ..... compatible ✔
+Safari 3.2+ .... compatible ✔
+Chrome 3+ ...... compatible ✔
+Opera 10+ ...... compatible</description>
+    <summary>RequireJS is a JavaScript file and module loader. It is optimized for in-browser use, but it can be used in other JavaScript environments, like Rhino and Node.</summary>
+    <releaseNotes />
+    <copyright>Copyright 2011</copyright>
+    <tags>JavaScript</tags>
+  </metadata>
+</package>
