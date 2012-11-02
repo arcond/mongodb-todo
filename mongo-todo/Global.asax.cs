@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
+﻿using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Newtonsoft.Json.Serialization;
 
 namespace mongo_todo
 {
@@ -19,6 +16,14 @@ namespace mongo_todo
 			WebApiConfig.Register(GlobalConfiguration.Configuration);
 			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
+
+			var formatters = GlobalConfiguration.Configuration.Formatters;
+			var xmlFormatter = formatters.XmlFormatter;
+			formatters.Remove(xmlFormatter);
+			formatters.Add(xmlFormatter);
+
+			var jsonFormatter = formatters.JsonFormatter;
+			jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 		}
 	}
 }

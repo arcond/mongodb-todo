@@ -45,7 +45,8 @@ define [
 		tasks: (userId) ->
 			@userView.remove()
 			@users.on 'reset', =>
-				user = @users.get userId
+				if userId > 0 then user = @users.get userId
+				else user = new Models.User
 				@userView = new Views.UserView model: user
 				@$el.find('#user').html @userView.render().el
 				return
