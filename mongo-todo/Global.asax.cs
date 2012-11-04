@@ -11,11 +11,13 @@ namespace mongo_todo
 	{
 		protected void Application_Start()
 		{
+			Bootstrapper.Initialise();
 			AreaRegistration.RegisterAllAreas();
 
 			WebApiConfig.Register(GlobalConfiguration.Configuration);
 			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
+			AutoMapperConfig.RegisterMaps();
 
 			var formatters = GlobalConfiguration.Configuration.Formatters;
 			var xmlFormatter = formatters.XmlFormatter;

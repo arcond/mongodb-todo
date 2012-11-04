@@ -1,24 +1,31 @@
-﻿using System;
+﻿using AutoMapper;
+using Domain;
+using mongo_todo.Models;
+using MongoDB.Bson;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using System.Web.Mvc;
-using mongo_todo.Models;
 
 namespace mongo_todo.Controllers
 {
     public class UsersController : ApiController
     {
-		public IEnumerable<UserModel> Get()
+		private readonly IUserRepository _userRepository;
+		public UsersController(IUserRepository userRepository)
 		{
-			throw new NotImplementedException();
+			_userRepository = userRepository;
 		}
 
-		public Object Get(int id)
+		public IEnumerable<UserModel> Get()
 		{
-			throw new NotImplementedException();
+			return Mapper.Map<IEnumerable<UserModel>>(_userRepository.GetAll().ToList());
+		}
+
+		public Object Get(string id)
+		{
+			return Mapper.Map<UserModel>(_userRepository.Get(ObjectId.Parse(id)));
 		}
 
 		public HttpResponseMessage Put(UserModel user)

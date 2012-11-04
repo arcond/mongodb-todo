@@ -1,21 +1,26 @@
-﻿using System;
+﻿using Domain;
+using mongo_todo.Models;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using mongo_todo.Models;
 
 namespace mongo_todo.Controllers
 {
     public class TasksController : ApiController
 	{
+		private readonly ITaskRepository _taskRepository;
+		public TasksController(ITaskRepository taskRepository)
+		{
+			_taskRepository = taskRepository;
+		}
+
 		public IEnumerable<TaskModel> Get()
 		{
 			throw new NotImplementedException();
 		}
 
-		public Object Get(int id)
+		public Object Get(string id)
 		{
 			throw new NotImplementedException();
 		}
