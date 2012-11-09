@@ -28,7 +28,7 @@ namespace Domain.Repository
 			return tasks.AsQueryable();
 		}
 
-		Task Get(ObjectId id)
+		public Task Get(ObjectId id)
 		{
 			return new Task {
 				Completed = false,

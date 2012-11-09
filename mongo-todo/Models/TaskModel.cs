@@ -5,11 +5,13 @@ namespace mongo_todo.Models
 {
 	public class TaskModel
 	{
-		public Object Id { get; set; }
+		public string Id { get; set; }
 
 		[Required]
 		public string Description { get; set; }
 
 		public bool Completed { get; set; }
+
+		public string UserId { get; set; }
 	}
 }

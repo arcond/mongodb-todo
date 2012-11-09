@@ -45,7 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Factory\TaskFactory.cs" />
+    <Compile Include="Factory\UserFactory.cs" />
+    <Compile Include="ITaskFactory.cs" />
     <Compile Include="ITaskRepository.cs" />
+    <Compile Include="IUserFactory.cs" />
     <Compile Include="IUserRepository.cs" />
     <Compile Include="Model\MongoDbModel.cs" />
     <Compile Include="Model\Task.cs" />
