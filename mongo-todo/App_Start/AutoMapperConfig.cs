@@ -12,7 +12,11 @@ namespace mongo_todo
 				.ForMember(x => x.Id, x => x.MapFrom(y => y.Id.ToString()));
 
 			Mapper.CreateMap<User, UserModel>()
-				.ForMember(x => x.Id, x => x.MapFrom(y => y.Id.ToString()));
+				.ForMember(x => x.Id, x => x.MapFrom(y => y.Id.ToString()))
+				.ForMember(x => x.TasksUrl, x => x.Ignore())
+				.AfterMap((y, x) => {
+					x.TasksUrl = string.Concat("~/tasks/all/", x.Id);
+				});
 		}
 	}
 }

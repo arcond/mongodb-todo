@@ -96,17 +96,18 @@ define [
 
 		initialize: (options) ->
 			@model.on 'change', @render, @
+			@tasks = new Collections.Todos url: @model.get('tasksUrl')
+			@tasks.on 'reset', @renderList, @
 			super options
 
 		render: ->
 			@removeSubViews()
 			@$el.html @template @model.toJSON()
-			@renderList()
 			super()
 
 		renderList: ->
 			if @model.tasks?.length
-				list = new TodoList collection: @model.tasks
+				list = new TodoList collection: @tasks
 				@addSubView list
 			return
 
@@ -119,6 +120,8 @@ define [
 
 		initialize: (options) ->
 			@collection.on 'reset', @render, @
+			@collection.on 'add', @render, @
+			@collection.on 'remove', @render, @
 			super options
 
 		render: ->

@@ -29,27 +29,18 @@ define [
 			return
 
 	class User extends BaseModel
-		urlRoot: ''
+		urlRoot: '/api/users/user'
 		tasks: Collections.Todos
 		defaults:
 			name: ''
-
-		initialize: (options) ->
-			if options?.tasks
-				tasks = new Collections.Todos options.tasks
-			super options
-
-		toJSON: ->
-			json = super()
-			json.tasks = tasks.toJSON()
-			json
+			tasksUrl: ''
 
 		updateName: (newName) ->
 			@set
 				name: newName
 
 	class Todo extends BaseModel
-		urlRoot: ''
+		urlRoot: '/api/tasks/task'
 		defaults:
 			description: ''
 			completed: false

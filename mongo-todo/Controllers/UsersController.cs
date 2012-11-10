@@ -10,8 +10,8 @@ using System.Web.Http;
 
 namespace mongo_todo.Controllers
 {
-    public class UsersController : ApiController
-    {
+	public class UsersController :ApiController
+	{
 		private readonly IUserRepository _userRepository;
 		public UsersController(IUserRepository userRepository)
 		{
@@ -47,5 +47,5 @@ namespace mongo_todo.Controllers
 		{
 			throw new NotImplementedException();
 		}
-    }
+	}
 }

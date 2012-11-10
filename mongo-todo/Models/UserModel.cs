@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace mongo_todo.Models
 {
@@ -11,6 +9,6 @@ namespace mongo_todo.Models
 		[Required]
 		public string Name { get; set; }
 
-		public IEnumerable<TaskModel> Tasks { get; set; }
+		public string TasksUrl { get; set; }
 	}
 }
