@@ -1,0 +1,18 @@
+﻿@{
+	ViewBag.Title = "WebAPI To-Do Example";
+}
+
+@section templates {
+	<script type="text/template" id="toolbar-template">
+		@Html.Partial("_ToolbarView")
+	</script>
+	<script type="text/template" id="user-template">
+		@Html.Partial("_UserView")
+	</script>
+	<script type="text/template" id="todo-list-template">
+		@Html.Partial("_TodoListView")
+	</script>
+	<script type="text/template" id="todo-template">
+		@Html.Partial("_TodoView")
+	</script>
+}

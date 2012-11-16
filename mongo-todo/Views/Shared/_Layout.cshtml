@@ -1,0 +1,16 @@
+﻿@using Microsoft.Web.Optimization
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width" />
+	<title>@ViewBag.Title</title>
+	<script src="~/Scripts/lib/modernizr-2.6.2.js"></script>
+</head>
+<body>
+	<section id="main-content">
+		@RenderBody()
+	</section>
+	@RenderSection("templates", false)
+	@Scripts.Render("~/bundles/lib")
+</body>
+</html>

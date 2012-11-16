@@ -106,7 +106,7 @@ define [
 			super()
 
 		renderList: ->
-			if @model.tasks?.length
+			if @tasks?.length
 				list = new TodoList collection: @tasks
 				@addSubView list
 			return
@@ -133,7 +133,7 @@ define [
 			@removeSubViews()
 			@collection.filter (model) ->
 				view = new TodoView model: model
-				@addSubView view
+				@addSubView view, 'append', 'ul'
 				return
 			return
 

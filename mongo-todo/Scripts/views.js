@@ -170,7 +170,7 @@
 
       UserView.prototype.renderList = function() {
         var list, _ref;
-        if ((_ref = this.model.tasks) != null ? _ref.length : void 0) {
+        if ((_ref = this.tasks) != null ? _ref.length : void 0) {
           list = new TodoList({
             collection: this.tasks
           });
@@ -215,7 +215,7 @@
           view = new TodoView({
             model: model
           });
-          this.addSubView(view);
+          this.addSubView(view, 'append', 'ul');
         });
       };
 

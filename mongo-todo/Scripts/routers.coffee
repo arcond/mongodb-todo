@@ -13,7 +13,7 @@ define [
 			':userId': 'tasks'
 
 		initialize: (options) ->
-			@$el = $('#content')
+			@$el = $('#main-content')
 			@users = new Collections.Users
 			@toolbarView = new Views.ToolbarView collection: @users
 			@userView = new Views.UserView
