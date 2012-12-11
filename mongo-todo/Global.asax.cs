@@ -1,7 +1,8 @@
-﻿using System.Web.Http;
+﻿using Newtonsoft.Json.Serialization;
+using System.Web.Http;
 using System.Web.Mvc;
+using System.Web.Optimization;
 using System.Web.Routing;
-using Newtonsoft.Json.Serialization;
 
 namespace mongo_todo
 {
@@ -17,6 +18,7 @@ namespace mongo_todo
 			WebApiConfig.Register(GlobalConfiguration.Configuration);
 			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
+			BundleConfig.RegisterBundles(BundleTable.Bundles);
 			AutoMapperConfig.RegisterMaps();
 
 			var formatters = GlobalConfiguration.Configuration.Formatters;

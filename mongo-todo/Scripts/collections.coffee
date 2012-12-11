@@ -39,5 +39,6 @@ define [
 				model.get('completed') is false
 
 	Collections = Collections ? {}
-	Collections.Users
-	Collections.Todos
+	Collections.Users = Users
+	Collections.Todos = Todos
+	Collections

@@ -1,6 +1,6 @@
 ﻿using System.Web.Optimization;
 
-namespace mongo_todo.App_Start
+namespace mongo_todo
 {
 	public class BundleConfig
 	{
@@ -11,7 +11,7 @@ namespace mongo_todo.App_Start
 				.Include("~/scripts/lib/handlebars.js")
 				.Include("~/scripts/lib/bootstrap.js")
 				.Include("~/scripts/lib/underscore.js")
-				.Include("~/scripts/lib/require.js")
+				//.Include("~/scripts/lib/require.js")
 				.Include("~/scripts/lib/backbone.js")
 				);
 
@@ -21,6 +21,10 @@ namespace mongo_todo.App_Start
 				.Include("~/scripts/views.js")
 				.Include("~/scripts/routers.js")
 				.Include("~/scripts/app.js")
+				);
+
+			bundles.Add(new ScriptBundle("~/bundles/extension")
+				.Include("~/scripts/extensions.js")
 				);
 		}
 	}

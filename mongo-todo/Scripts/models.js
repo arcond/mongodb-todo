@@ -3,7 +3,7 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(['underscore', 'backbone', 'collections'], function(_, Backbone, Collections) {
+  define(['underscore', 'backbone'], function(_, Backbone) {
     var BaseModel, Models, Todo, User;
     BaseModel = (function(_super) {
 
@@ -53,8 +53,6 @@
 
       User.prototype.urlRoot = '/api/users/user';
 
-      User.prototype.tasks = Collections.Todos;
-
       User.prototype.defaults = {
         name: '',
         tasksUrl: ''
@@ -97,7 +95,8 @@
     })(BaseModel);
     Models = Models != null ? Models : {};
     Models.User = User;
-    return Models.Todo = Todo;
+    Models.Todo = Todo;
+    return Models;
   });
 
 }).call(this);

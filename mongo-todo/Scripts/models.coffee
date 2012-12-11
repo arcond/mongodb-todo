@@ -1,8 +1,7 @@
 define [
 	'underscore'
 	'backbone'
-	'collections'
-], (_, Backbone, Collections) ->
+], (_, Backbone) ->
 	class BaseModel extends Backbone.Model
 		@_preservedAttributes: {}
 
@@ -30,7 +29,6 @@ define [
 
 	class User extends BaseModel
 		urlRoot: '/api/users/user'
-		tasks: Collections.Todos
 		defaults:
 			name: ''
 			tasksUrl: ''
@@ -56,3 +54,4 @@ define [
 	Models = Models ? {}
 	Models.User = User
 	Models.Todo = Todo
+	Models

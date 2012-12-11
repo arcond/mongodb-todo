@@ -2,9 +2,9 @@ define [
 	'jquery'
 	'underscore'
 	'backbone'
-	'collections'
 	'models'
-], ($, _, Backbone, Collections, Models) ->
+	'collections'
+], ($, _, Backbone, Models, Collections) ->
 	class BaseView extends Backbone.View
 		subviews: []
 
@@ -52,9 +52,9 @@ define [
 			return
 
 	class ToolbarView extends BaseView
-		template: ''
+		template: Handlebars.compile $('#toolbar-template').html() ? ''
 		events:
-			'click #add-user': 'addUser'
+			'click #create-user': 'addUser'
 			'change #select-user': 'selectUser'
 			'click #save': 'save'
 
@@ -90,19 +90,20 @@ define [
 			return
 
 	class UserView extends BaseView
-		template: ''
+		template: Handlebars.compile $('#user-template').html() ? ''
 		events:
 			'keyup #user-name': 'updateUserName'
 
 		initialize: (options) ->
-			@model.on 'change', @render, @
-			@tasks = new Collections.Todos url: @model.get('tasksUrl')
-			@tasks.on 'reset', @renderList, @
+			@model.on 'change', @render, @ if @model
+			if @tasks
+				@tasks = new Collections.Todos url: @model.get('tasksUrl')
+				@tasks.on 'reset', @renderList, @
 			super options
 
 		render: ->
 			@removeSubViews()
-			@$el.html @template @model.toJSON()
+			if @model then @$el.html @template @model.toJSON() else @$el.html @template()
 			super()
 
 		renderList: ->
@@ -116,7 +117,7 @@ define [
 			return
 
 	class TodoList extends BaseView
-		template: ''
+		template: Handlebars.compile $('#todo-list-template').html() ? ''
 
 		initialize: (options) ->
 			@collection.on 'reset', @render, @
@@ -138,7 +139,7 @@ define [
 			return
 
 	class TodoView extends BaseView
-		template: ''
+		template: Handlebars.compile $('#todo-template').html() ? ''
 		events:
 			'keyup input[type=text]': 'updateDescription'
 			'click input[type=checkbox]': 'toggleComplete'
@@ -162,5 +163,6 @@ define [
 			return
 
 	Views = Views ? {}
-	Views.ToolbarView
-	Views.UserView
+	Views.ToolbarView = ToolbarView
+	Views.UserView = UserView
+	Views

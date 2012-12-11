@@ -1,10 +1,11 @@
-﻿@using Microsoft.Web.Optimization
+﻿@using System.Web.Optimization
 <!DOCTYPE html>
 <html>
 <head>
 	<meta name="viewport" content="width=device-width" />
 	<title>@ViewBag.Title</title>
 	<script src="~/Scripts/lib/modernizr-2.6.2.js"></script>
+	<script data-main="Scripts/app" src="~/Scripts/lib/require.js"></script>
 </head>
 <body>
 	<section id="main-content">
@@ -12,5 +13,6 @@
 	</section>
 	@RenderSection("templates", false)
 	@Scripts.Render("~/bundles/lib")
+	@Scripts.Render("~/bundles/extension")
 </body>
 </html>

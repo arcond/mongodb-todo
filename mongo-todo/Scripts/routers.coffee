@@ -2,10 +2,10 @@ define [
 	'jquery'
 	'underscore'
 	'backbone'
-	'views'
-	'collections'
 	'models'
-], ($, _, Backbone, Views, Collections, Models) ->
+	'collections'
+	'views'
+], ($, _, Backbone, Models, Collections, Views) ->
 	class Router extends Backbone.Router
 		$el: null
 		routes:
@@ -54,4 +54,6 @@ define [
 			@setup()
 			return
 
-	Router
+	Routers = Routers ? {}
+	Routers.Router = Router
+	Routers

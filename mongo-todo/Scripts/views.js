@@ -3,7 +3,7 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(['jquery', 'underscore', 'backbone', 'collections', 'models'], function($, _, Backbone, Collections, Models) {
+  define(['jquery', 'underscore', 'backbone', 'models', 'collections'], function($, _, Backbone, Models, Collections) {
     var BaseView, TodoList, TodoView, ToolbarView, UserView, Views;
     BaseView = (function(_super) {
 
@@ -82,6 +82,7 @@
 
     })(Backbone.View);
     ToolbarView = (function(_super) {
+      var _ref;
 
       __extends(ToolbarView, _super);
 
@@ -89,10 +90,10 @@
         return ToolbarView.__super__.constructor.apply(this, arguments);
       }
 
-      ToolbarView.prototype.template = '';
+      ToolbarView.prototype.template = Handlebars.compile((_ref = $('#toolbar-template').html()) != null ? _ref : '');
 
       ToolbarView.prototype.events = {
-        'click #add-user': 'addUser',
+        'click #create-user': 'addUser',
         'change #select-user': 'selectUser',
         'click #save': 'save'
       };
@@ -140,6 +141,7 @@
 
     })(BaseView);
     UserView = (function(_super) {
+      var _ref;
 
       __extends(UserView, _super);
 
@@ -147,30 +149,38 @@
         return UserView.__super__.constructor.apply(this, arguments);
       }
 
-      UserView.prototype.template = '';
+      UserView.prototype.template = Handlebars.compile((_ref = $('#user-template').html()) != null ? _ref : '');
 
       UserView.prototype.events = {
         'keyup #user-name': 'updateUserName'
       };
 
       UserView.prototype.initialize = function(options) {
-        this.model.on('change', this.render, this);
-        this.tasks = new Collections.Todos({
-          url: this.model.get('tasksUrl')
-        });
-        this.tasks.on('reset', this.renderList, this);
+        if (this.model) {
+          this.model.on('change', this.render, this);
+        }
+        if (this.tasks) {
+          this.tasks = new Collections.Todos({
+            url: this.model.get('tasksUrl')
+          });
+          this.tasks.on('reset', this.renderList, this);
+        }
         return UserView.__super__.initialize.call(this, options);
       };
 
       UserView.prototype.render = function() {
         this.removeSubViews();
-        this.$el.html(this.template(this.model.toJSON()));
+        if (this.model) {
+          this.$el.html(this.template(this.model.toJSON()));
+        } else {
+          this.$el.html(this.template());
+        }
         return UserView.__super__.render.call(this);
       };
 
       UserView.prototype.renderList = function() {
-        var list, _ref;
-        if ((_ref = this.tasks) != null ? _ref.length : void 0) {
+        var list, _ref1;
+        if ((_ref1 = this.tasks) != null ? _ref1.length : void 0) {
           list = new TodoList({
             collection: this.tasks
           });
@@ -186,6 +196,7 @@
 
     })(BaseView);
     TodoList = (function(_super) {
+      var _ref;
 
       __extends(TodoList, _super);
 
@@ -193,7 +204,7 @@
         return TodoList.__super__.constructor.apply(this, arguments);
       }
 
-      TodoList.prototype.template = '';
+      TodoList.prototype.template = Handlebars.compile((_ref = $('#todo-list-template').html()) != null ? _ref : '');
 
       TodoList.prototype.initialize = function(options) {
         this.collection.on('reset', this.render, this);
@@ -223,6 +234,7 @@
 
     })(BaseView);
     TodoView = (function(_super) {
+      var _ref;
 
       __extends(TodoView, _super);
 
@@ -230,7 +242,7 @@
         return TodoView.__super__.constructor.apply(this, arguments);
       }
 
-      TodoView.prototype.template = '';
+      TodoView.prototype.template = Handlebars.compile((_ref = $('#todo-template').html()) != null ? _ref : '');
 
       TodoView.prototype.events = {
         'keyup input[type=text]': 'updateDescription',
@@ -261,8 +273,9 @@
 
     })(BaseView);
     Views = Views != null ? Views : {};
-    Views.ToolbarView;
-    return Views.UserView;
+    Views.ToolbarView = ToolbarView;
+    Views.UserView = UserView;
+    return Views;
   });
 
 }).call(this);

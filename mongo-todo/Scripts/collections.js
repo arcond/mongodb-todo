@@ -93,8 +93,9 @@
 
     })(BaseCollection);
     Collections = Collections != null ? Collections : {};
-    Collections.Users;
-    return Collections.Todos;
+    Collections.Users = Users;
+    Collections.Todos = Todos;
+    return Collections;
   });
 
 }).call(this);

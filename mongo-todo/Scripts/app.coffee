@@ -1,4 +1,4 @@
-reuire.config
+require.config
 	shim:
 		'underscore':
 			exports: '_'
@@ -15,7 +15,7 @@ reuire.config
 
 require [
 	'routers'
-], (Router) ->
-	new Router
+], (Routers) ->
+	new Routers.Router
 	Backbone.history.start()
 	return
