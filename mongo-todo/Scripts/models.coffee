@@ -3,20 +3,20 @@ define [
 	'backbone'
 ], (_, Backbone) ->
 	class BaseModel extends Backbone.Model
-		@_preservedAttributes: {}
+		_preservedAttributes: {}
 
 		constructor: (attributes, options) ->
 			super attributes, options
-			_preservedAttributes = @toJSON()
+			@_preservedAttributes = @toJSON()
 			return
 
 		parse: (response) ->
 			response = super response
-			_preservedAttributes = @toJSON()
+			@_preservedAttributes = @toJSON()
 			response
 
 		isDirty: ->
-			not _.equals @toJSON(), _preservedAttributes
+			not _.isEqual @toJSON(), @_preservedAttributes
 
 		set: (attributes, options) ->
 			super attributes, options
@@ -51,7 +51,11 @@ define [
 			@save 'completed', not @get 'completed'
 			return
 
-	Models = Models ? {}
-	Models.User = User
-	Models.Todo = Todo
-	Models
+	# Models = Models ? {}
+	# Models.User = User
+	# Models.Todo = Todo
+	# Models
+	{
+		User: User
+		Todo: Todo
+	}

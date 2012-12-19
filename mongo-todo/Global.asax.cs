@@ -12,7 +12,6 @@ namespace mongo_todo
 	{
 		protected void Application_Start()
 		{
-			Bootstrapper.Initialise();
 			AreaRegistration.RegisterAllAreas();
 
 			WebApiConfig.Register(GlobalConfiguration.Configuration);
@@ -28,6 +27,8 @@ namespace mongo_todo
 
 			var jsonFormatter = formatters.JsonFormatter;
 			jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+
+			Bootstrapper.Initialise();
 		}
 	}
 }

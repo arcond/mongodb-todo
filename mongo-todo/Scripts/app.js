@@ -15,7 +15,8 @@
       jquery: 'lib/jquery.min',
       underscore: 'lib/underscore',
       backbone: 'lib/backbone'
-    }
+    },
+    urlArgs: 'bust=v2'
   });
 
   require(['routers'], function(Routers) {

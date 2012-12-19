@@ -38,7 +38,11 @@ define [
 			@filter (model) ->
 				model.get('completed') is false
 
-	Collections = Collections ? {}
-	Collections.Users = Users
-	Collections.Todos = Todos
-	Collections
+	# Collections = Collections ? {}
+	# Collections.Users = Users
+	# Collections.Todos = Todos
+	# Collections
+	{
+		Users: Users
+		Todos: Todos
+	}

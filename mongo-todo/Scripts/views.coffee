@@ -13,6 +13,7 @@ define [
 			super options
 
 		render: ->
+			@delegateEvents()
 			@
 
 		remove: ->
@@ -77,6 +78,7 @@ define [
 			return
 
 		selectUser: (ev) ->
+			console.log $(ev.target).val()
 			@trigger 'users:select', @collection.get $(ev.target).val()
 			return
 
@@ -162,7 +164,11 @@ define [
 			@model.toggle()
 			return
 
-	Views = Views ? {}
-	Views.ToolbarView = ToolbarView
-	Views.UserView = UserView
-	Views
+	# Views = Views ? {}
+	# Views.ToolbarView = ToolbarView
+	# Views.UserView = UserView
+	# Views
+	{
+		ToolbarView: ToolbarView
+		UserView: UserView
+	}

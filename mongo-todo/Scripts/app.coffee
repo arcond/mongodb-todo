@@ -12,7 +12,7 @@ require.config
 		jquery: 'lib/jquery.min'
 		underscore: 'lib/underscore'
 		backbone: 'lib/backbone'
-
+	urlArgs: 'bust=v2' # This can be used to invalidate the cache
 require [
 	'routers'
 ], (Routers) ->

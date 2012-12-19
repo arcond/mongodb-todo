@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   define(['jquery', 'underscore', 'backbone', 'models', 'collections'], function($, _, Backbone, Models, Collections) {
-    var BaseView, TodoList, TodoView, ToolbarView, UserView, Views;
+    var BaseView, TodoList, TodoView, ToolbarView, UserView;
     BaseView = (function(_super) {
 
       __extends(BaseView, _super);
@@ -17,6 +17,7 @@
       }
 
       BaseView.prototype.render = function() {
+        this.delegateEvents();
         return this;
       };
 
@@ -122,6 +123,7 @@
       };
 
       ToolbarView.prototype.selectUser = function(ev) {
+        console.log($(ev.target).val());
         this.trigger('users:select', this.collection.get($(ev.target).val()));
       };
 
@@ -272,10 +274,10 @@
       return TodoView;
 
     })(BaseView);
-    Views = Views != null ? Views : {};
-    Views.ToolbarView = ToolbarView;
-    Views.UserView = UserView;
-    return Views;
+    return {
+      ToolbarView: ToolbarView,
+      UserView: UserView
+    };
   });
 
 }).call(this);

@@ -4,29 +4,27 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   define(['underscore', 'backbone'], function(_, Backbone) {
-    var BaseModel, Models, Todo, User;
+    var BaseModel, Todo, User;
     BaseModel = (function(_super) {
 
       __extends(BaseModel, _super);
 
-      BaseModel._preservedAttributes = {};
+      BaseModel.prototype._preservedAttributes = {};
 
       function BaseModel(attributes, options) {
-        var _preservedAttributes;
         BaseModel.__super__.constructor.call(this, attributes, options);
-        _preservedAttributes = this.toJSON();
+        this._preservedAttributes = this.toJSON();
         return;
       }
 
       BaseModel.prototype.parse = function(response) {
-        var _preservedAttributes;
         response = BaseModel.__super__.parse.call(this, response);
-        _preservedAttributes = this.toJSON();
+        this._preservedAttributes = this.toJSON();
         return response;
       };
 
       BaseModel.prototype.isDirty = function() {
-        return !_.equals(this.toJSON(), _preservedAttributes);
+        return !_.isEqual(this.toJSON(), this._preservedAttributes);
       };
 
       BaseModel.prototype.set = function(attributes, options) {
@@ -93,10 +91,10 @@
       return Todo;
 
     })(BaseModel);
-    Models = Models != null ? Models : {};
-    Models.User = User;
-    Models.Todo = Todo;
-    return Models;
+    return {
+      User: User,
+      Todo: Todo
+    };
   });
 
 }).call(this);
