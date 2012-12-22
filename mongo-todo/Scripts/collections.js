@@ -77,6 +77,13 @@
 
       Todos.prototype.url = '';
 
+      Todos.prototype.initialize = function(options) {
+        if (options != null ? options.url : void 0) {
+          this.url = options.url;
+        }
+        return Todos.__super__.initialize.call(this, options);
+      };
+
       Todos.prototype.completed = function() {
         return this.filter(function(model) {
           return model.get('completed') === true;

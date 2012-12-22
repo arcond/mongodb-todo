@@ -47,8 +47,16 @@ define [
 			@users.on 'reset', =>
 				if userId then user = @users.get userId
 				else user = new Models.User
-				@userView = new Views.UserView model: user
-				@$el.find('#user').html @userView.render().el
+				if user.get('tasksUrl')
+					tasks = new Collections.Todos url: user.get('tasksUrl')
+					tasks.on 'reset', =>
+						@userView = new Views.UserView model: user, tasks: tasks
+						@$el.find('#user').html @userView.render().el
+						return
+					tasks.fetch()
+				else
+					@userView = new Views.UserView model: user
+					@$el.find('#user').html @userView.render().el
 				return
 			, @
 			@users.fetch()

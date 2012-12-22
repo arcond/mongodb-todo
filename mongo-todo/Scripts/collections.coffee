@@ -30,6 +30,10 @@ define [
 		model: Models.Todo
 		url: ''
 
+		initialize: (options) ->
+			@url = options.url if options?.url
+			super options
+
 		completed: ->
 			@filter (model) ->
 				model.get('completed') is true

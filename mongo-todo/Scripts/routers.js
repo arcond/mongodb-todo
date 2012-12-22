@@ -54,16 +54,30 @@
         var _this = this;
         this.userView.remove();
         this.users.on('reset', function() {
-          var user;
+          var tasks, user;
           if (userId) {
             user = _this.users.get(userId);
           } else {
             user = new Models.User;
           }
-          _this.userView = new Views.UserView({
-            model: user
-          });
-          _this.$el.find('#user').html(_this.userView.render().el);
+          if (user.get('tasksUrl')) {
+            tasks = new Collections.Todos({
+              url: user.get('tasksUrl')
+            });
+            tasks.on('reset', function() {
+              _this.userView = new Views.UserView({
+                model: user,
+                tasks: tasks
+              });
+              _this.$el.find('#user').html(_this.userView.render().el);
+            });
+            tasks.fetch();
+          } else {
+            _this.userView = new Views.UserView({
+              model: user
+            });
+            _this.$el.find('#user').html(_this.userView.render().el);
+          }
         }, this);
         this.users.fetch();
       };
