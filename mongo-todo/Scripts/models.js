@@ -31,8 +31,15 @@
         BaseModel.__super__.set.call(this, attributes, options);
         if (this.isValid() === false && !this.has('invalid')) {
           this.set('invalid', this.isValid());
-        } else if (this.isValid() === true && this.has('invalid')) {
+        } else if (this.isValid() && this.has('invalid')) {
           this.unset('invalid', {
+            silent: true
+          });
+        }
+        if (this.isDirty() && !this.has('dirty')) {
+          this.set('dirty', this.isDirty());
+        } else if (!this.isDirty() && this.has('dirty')) {
+          this.unset('dirty', {
             silent: true
           });
         }

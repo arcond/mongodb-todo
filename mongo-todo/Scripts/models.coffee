@@ -20,10 +20,19 @@ define [
 
 		set: (attributes, options) ->
 			super attributes, options
-			if @isValid() is false and not @has 'invalid'
+
+			# flag or un-flag an invalid model
+			if @isValid() is false and not @has('invalid')
 				@set 'invalid', @isValid()
-			else if @isValid() is true and @has 'invalid'
+			else if @isValid() and @has('invalid')
 				@unset 'invalid',
+					silent: true
+
+			# flag or un-flag a dirty model
+			if @isDirty() and not @has('dirty')
+				@set 'dirty', @isDirty()
+			else if not @isDirty() and @has('dirty')
+				@unset 'dirty',
 					silent: true
 			return
 
@@ -52,10 +61,6 @@ define [
 			@save 'completed', not @get 'completed'
 			return
 
-	# Models = Models ? {}
-	# Models.User = User
-	# Models.Todo = Todo
-	# Models
 	{
 		User: User
 		Todo: Todo

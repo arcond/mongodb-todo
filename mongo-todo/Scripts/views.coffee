@@ -96,10 +96,13 @@ define [
 			'keyup #user-name': 'updateUserName'
 
 		initialize: (options) ->
-			@model.on 'change', @render, @ if @model
-			if @tasks
-				@tasks = new Collections.Todos url: @model.get('tasksUrl')
-				@tasks.on 'reset', @renderList, @
+			if options?.model
+				@model = options.model
+				@model.on 'change', @render, @
+				if @model.get('tasksUrl')
+					@tasks = new Collections.Todos url: @model.get('tasksUrl')
+					@tasks.on 'reset', @renderList, @
+					@tasks.fetch()
 			super options
 
 		render: ->
@@ -133,7 +136,7 @@ define [
 
 		renderRows: ->
 			@removeSubViews()
-			@collection.filter (model) ->
+			@collection.filter (model) =>
 				view = new TodoView model: model
 				@addSubView view, 'append', 'ul'
 				return
@@ -163,10 +166,6 @@ define [
 			@model.toggle()
 			return
 
-	# Views = Views ? {}
-	# Views.ToolbarView = ToolbarView
-	# Views.UserView = UserView
-	# Views
 	{
 		ToolbarView: ToolbarView
 		UserView: UserView

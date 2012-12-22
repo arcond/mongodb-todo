@@ -157,14 +157,16 @@
       };
 
       UserView.prototype.initialize = function(options) {
-        if (this.model) {
+        if (options != null ? options.model : void 0) {
+          this.model = options.model;
           this.model.on('change', this.render, this);
-        }
-        if (this.tasks) {
-          this.tasks = new Collections.Todos({
-            url: this.model.get('tasksUrl')
-          });
-          this.tasks.on('reset', this.renderList, this);
+          if (this.model.get('tasksUrl')) {
+            this.tasks = new Collections.Todos({
+              url: this.model.get('tasksUrl')
+            });
+            this.tasks.on('reset', this.renderList, this);
+            this.tasks.fetch();
+          }
         }
         return UserView.__super__.initialize.call(this, options);
       };
@@ -221,13 +223,14 @@
       };
 
       TodoList.prototype.renderRows = function() {
+        var _this = this;
         this.removeSubViews();
         this.collection.filter(function(model) {
           var view;
           view = new TodoView({
             model: model
           });
-          this.addSubView(view, 'append', 'ul');
+          _this.addSubView(view, 'append', 'ul');
         });
       };
 
