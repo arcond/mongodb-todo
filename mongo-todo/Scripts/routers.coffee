@@ -45,21 +45,15 @@ define [
 		tasks: (userId) ->
 			@userView.remove()
 			@users.on 'reset', =>
-				console.log userId
-				console.log @users
-				console.log @users.get userId
-				if userId > 0 then user = @users.get userId
+				if userId then user = @users.get userId
 				else user = new Models.User
 				@userView = new Views.UserView model: user
 				@$el.find('#user').html @userView.render().el
 				return
 			, @
-			@setup()
+			@users.fetch()
 			return
 
-	# Routers = Routers ? {}
-	# Routers.Router = Router
-	# Routers
 	{
 		Router: Router
 	}

@@ -13,17 +13,17 @@ namespace Domain.Repository
 			tasks.Add(new Task {
 				Completed = false,
 				Description = "Task 1",
-				Id = ObjectId.GenerateNewId()
+				Id = DummyGlobal.Instance.BaseTaskObjectId[0]
 			});
 			tasks.Add(new Task {
 				Completed = false,
 				Description = "Task 2",
-				Id = ObjectId.GenerateNewId()
+				Id = DummyGlobal.Instance.BaseTaskObjectId[1]
 			});
 			tasks.Add(new Task {
 				Completed = false,
 				Description = "Task 3",
-				Id = ObjectId.GenerateNewId()
+				Id = DummyGlobal.Instance.BaseTaskObjectId[2]
 			});
 			return tasks.AsQueryable();
 		}

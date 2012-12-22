@@ -49,7 +49,7 @@
         return User.__super__.constructor.apply(this, arguments);
       }
 
-      User.prototype.urlRoot = '/api/users/user';
+      User.prototype.urlRoot = '/api/users';
 
       User.prototype.defaults = {
         name: '',
@@ -73,7 +73,9 @@
         return Todo.__super__.constructor.apply(this, arguments);
       }
 
-      Todo.prototype.urlRoot = '/api/tasks/task';
+      Todo.prototype.urlRoot = function() {
+        return '/api/users/#{@get("userId")}/tasks';
+      };
 
       Todo.prototype.defaults = {
         description: '',

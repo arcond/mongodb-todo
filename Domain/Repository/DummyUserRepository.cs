@@ -16,19 +16,19 @@ namespace Domain.Repository
 		public IQueryable<User> GetAll()
 		{
 			var users = new List<User>();
-			var userId = ObjectId.GenerateNewId();
+			var userId = DummyGlobal.Instance.BaseUserObjectId[0];
 			users.Add(new User {
 				Id = userId,
 				Name = "User 1",
 				Tasks = _taskRepository.GetAll(userId).ToList()
 			});
-			userId = ObjectId.GenerateNewId();
+			userId = DummyGlobal.Instance.BaseUserObjectId[1];
 			users.Add(new User {
 				Id = userId,
 				Name = "User 2",
 				Tasks = _taskRepository.GetAll(userId).ToList()
 			});
-			userId = ObjectId.GenerateNewId();
+			userId = DummyGlobal.Instance.BaseUserObjectId[2];
 			users.Add(new User {
 				Id = userId,
 				Name = "User 3",

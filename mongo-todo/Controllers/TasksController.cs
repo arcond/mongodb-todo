@@ -1,13 +1,13 @@
-﻿using Domain;
+﻿using AutoMapper;
+using Domain;
 using mongo_todo.Models;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using System.Linq;
-using AutoMapper;
-using System.Net;
 
 namespace mongo_todo.Controllers
 {
@@ -23,23 +23,20 @@ namespace mongo_todo.Controllers
 			_taskFactory = taskFactory;
 		}
 
-		[ActionName("all")]
-		public IEnumerable<TaskModel> GetAll(string id)
+		public IEnumerable<TaskModel> GetAll(string userId)
 		{
-			var tasks = _taskRepository.GetAll(ObjectId.Parse(id));
+			var tasks = _taskRepository.GetAll(ObjectId.Parse(userId));
 			var models = Mapper.Map<IEnumerable<TaskModel>>(tasks);
 			return models;
 		}
 
-		[ActionName("task")]
-		public Object Get(string id)
+		public TaskModel Get(string userId, string id)
 		{
 			var task = _taskRepository.Get(ObjectId.Parse(id));
 			var model = Mapper.Map<TaskModel>(task);
 			return model;
 		}
 
-		[ActionName("task")]
 		public HttpResponseMessage Put(TaskModel task)
 		{
 			try {
@@ -53,7 +50,6 @@ namespace mongo_todo.Controllers
 			return new HttpResponseMessage(HttpStatusCode.OK);
 		}
 
-		[ActionName("task")]
 		public TaskModel Post(TaskModel task)
 		{
 			var todo = _taskFactory.CreateTask(task.Description);
@@ -63,7 +59,6 @@ namespace mongo_todo.Controllers
 			return Mapper.Map<TaskModel>(todo);
 		}
 
-		[ActionName("task")]
 		public HttpResponseMessage Delete(TaskModel task)
 		{
 			try {

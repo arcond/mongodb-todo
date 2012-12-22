@@ -123,7 +123,6 @@
       };
 
       ToolbarView.prototype.selectUser = function(ev) {
-        console.log($(ev.target).val());
         this.trigger('users:select', this.collection.get($(ev.target).val()));
       };
 

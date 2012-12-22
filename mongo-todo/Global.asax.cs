@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Serialization;
+﻿using Domain.Repository;
+using MongoDB.Bson;
+using Newtonsoft.Json.Serialization;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -12,6 +14,11 @@ namespace mongo_todo
 	{
 		protected void Application_Start()
 		{
+			for (int i = 0; i < 5; i++) {
+				DummyGlobal.Instance.BaseUserObjectId.Add(ObjectId.GenerateNewId());
+				DummyGlobal.Instance.BaseTaskObjectId.Add(ObjectId.GenerateNewId());
+			}
+
 			AreaRegistration.RegisterAllAreas();
 
 			WebApiConfig.Register(GlobalConfiguration.Configuration);
@@ -23,7 +30,6 @@ namespace mongo_todo
 			var formatters = GlobalConfiguration.Configuration.Formatters;
 			var xmlFormatter = formatters.XmlFormatter;
 			formatters.Remove(xmlFormatter);
-			formatters.Add(xmlFormatter);
 
 			var jsonFormatter = formatters.JsonFormatter;
 			jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();

@@ -55,10 +55,7 @@
         this.userView.remove();
         this.users.on('reset', function() {
           var user;
-          console.log(userId);
-          console.log(_this.users);
-          console.log(_this.users.get(userId));
-          if (userId > 0) {
+          if (userId) {
             user = _this.users.get(userId);
           } else {
             user = new Models.User;
@@ -68,7 +65,7 @@
           });
           _this.$el.find('#user').html(_this.userView.render().el);
         }, this);
-        this.setup();
+        this.users.fetch();
       };
 
       return Router;

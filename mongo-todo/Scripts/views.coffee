@@ -78,7 +78,6 @@ define [
 			return
 
 		selectUser: (ev) ->
-			console.log $(ev.target).val()
 			@trigger 'users:select', @collection.get $(ev.target).val()
 			return
 

@@ -24,7 +24,7 @@ define [
 
 	class Users extends BaseCollection
 		model: Models.User
-		url: '/api/users/all'
+		url: '/api/users'
 
 	class Todos extends BaseCollection
 		model: Models.Todo

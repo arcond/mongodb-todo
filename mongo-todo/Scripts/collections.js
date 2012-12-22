@@ -60,7 +60,7 @@
 
       Users.prototype.model = Models.User;
 
-      Users.prototype.url = '/api/users/all';
+      Users.prototype.url = '/api/users';
 
       return Users;
 

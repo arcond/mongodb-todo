@@ -57,6 +57,7 @@
     <Compile Include="Model\Task.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\DummyGlobal.cs" />
     <Compile Include="Repository\DummyTaskRepository.cs" />
     <Compile Include="Repository\DummyUserRepository.cs" />
   </ItemGroup>

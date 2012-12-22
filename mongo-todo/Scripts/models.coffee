@@ -28,7 +28,7 @@ define [
 			return
 
 	class User extends BaseModel
-		urlRoot: '/api/users/user'
+		urlRoot: '/api/users'
 		defaults:
 			name: ''
 			tasksUrl: ''
@@ -38,7 +38,8 @@ define [
 				name: newName
 
 	class Todo extends BaseModel
-		urlRoot: '/api/tasks/task'
+		urlRoot: ->
+			'/api/users/#{@get("userId")}/tasks'
 		defaults:
 			description: ''
 			completed: false
