@@ -1,8 +1,9 @@
-﻿using MongoDB.Bson;
+﻿using Domain.Model;
+using MongoDB.Bson;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Domain.Model
+namespace Domain
 {
 	public class User :MongoDbModel
 	{
@@ -30,5 +31,11 @@ namespace Domain.Model
 		{
 			Tasks.Remove(task);
 		}
+
+		internal override void SetContext(IContext context)
+		{
+			base.SetContext(context);
+			Tasks.ToList().ForEach(x => x.SetContext(context));
+		} 
 	}
 }

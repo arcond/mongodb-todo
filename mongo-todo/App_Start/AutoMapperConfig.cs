@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Domain.Model;
+using Domain;
 using mongo_todo.Models;
 
 namespace mongo_todo

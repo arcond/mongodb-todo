@@ -1,21 +1,26 @@
-﻿using Domain.Model;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Domain.Factory
 {
 	public class UserFactory :IUserFactory
 	{
+		private readonly IContext _context;
+		public UserFactory(IContext context)
+		{
+			_context = context;
+		}
+
 		public User CreateUser(string name)
 		{
-			return new User {
+			var user = new User {
 				Id = ObjectId.GenerateNewId(DateTime.UtcNow),
 				Name = name,
 				Tasks = new List<Task>()
 			};
+			user.SetContext(_context);
+			return user;
 		}
 	}
 }

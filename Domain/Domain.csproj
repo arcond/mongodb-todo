@@ -47,15 +47,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Context.cs" />
     <Compile Include="Factory\TaskFactory.cs" />
     <Compile Include="Factory\UserFactory.cs" />
+    <Compile Include="IContext.cs" />
     <Compile Include="ITaskFactory.cs" />
     <Compile Include="ITaskRepository.cs" />
     <Compile Include="IUserFactory.cs" />
     <Compile Include="IUserRepository.cs" />
     <Compile Include="Model\MongoDbModel.cs" />
-    <Compile Include="Model\Task.cs" />
-    <Compile Include="Model\User.cs" />
+    <Compile Include="Repository\TaskRepository.cs" />
+    <Compile Include="Repository\UserRepository.cs" />
+    <Compile Include="Task.cs" />
+    <Compile Include="User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\DummyGlobal.cs" />
     <Compile Include="Repository\DummyTaskRepository.cs" />

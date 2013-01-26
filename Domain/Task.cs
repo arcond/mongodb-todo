@@ -1,5 +1,6 @@
-﻿
-namespace Domain.Model
+﻿using Domain.Model;
+
+namespace Domain
 {
 	public class Task :MongoDbModel
 	{
