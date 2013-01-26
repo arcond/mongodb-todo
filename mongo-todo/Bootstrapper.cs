@@ -1,4 +1,5 @@
 using Domain;
+using Domain.Data;
 using Domain.Factory;
 using Domain.Repository;
 using Microsoft.Practices.Unity;
@@ -26,6 +27,7 @@ namespace mongo_todo
 			container.RegisterType<ITaskRepository, DummyTaskRepository>();
 			container.RegisterType<IUserFactory, UserFactory>();
 			container.RegisterType<ITaskFactory, TaskFactory>();
+			container.RegisterType<IContext, Context>();
 
 			return container;
 		}
