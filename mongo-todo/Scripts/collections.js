@@ -13,37 +13,7 @@
         return BaseCollection.__super__.constructor.apply(this, arguments);
       }
 
-      BaseCollection.prototype.isDirty = function() {
-        var dirties;
-        if (!this.models) {
-          return false;
-        }
-        dirties = this.filter(function(model) {
-          if (model.isDirty) {
-            return model.isDirty() === true;
-          }
-        });
-        return dirties.length > 0;
-      };
-
-      BaseCollection.prototype.isValid = function() {
-        var invalids;
-        if (!this.models) {
-          return true;
-        }
-        invalids = this.filter(function(model) {
-          if (model.isValid) {
-            return model.isValid() === false;
-          }
-        });
-        return invalids.length === 0;
-      };
-
       BaseCollection.prototype.save = function() {
-        var models;
-        models = this.filter(function(model) {
-          return model.isDirty() === true;
-        });
         _.invoke(models, 'save');
       };
 

@@ -16,19 +16,13 @@
         BaseView.__super__.constructor.call(this, options);
       }
 
-      BaseView.prototype.render = function() {
-        this.delegateEvents();
-        return this;
-      };
-
       BaseView.prototype.remove = function() {
         this.trigger('removed', this);
         this.removeSubViews();
-        this.off();
-        this.undelegateEvents();
         this.$el.fadeOut('fast', function() {
           $(this).remove();
         });
+        return BaseView.__super__.remove.call(this);
       };
 
       BaseView.prototype.addSubView = function(view, insertMethod, targetSelector) {
@@ -51,28 +45,6 @@
       BaseView.prototype.removeSubViews = function() {
         _.invoke(this.subviews, 'remove');
         this.subviews = [];
-      };
-
-      BaseView.prototype.isValid = function() {
-        var _ref, _ref1;
-        if ((_ref = this.collection) != null ? _ref.isValid : void 0) {
-          return this.collection.isValid();
-        }
-        if ((_ref1 = this.model) != null ? _ref1.isValid : void 0) {
-          return this.model.isValid();
-        }
-        return true;
-      };
-
-      BaseView.prototype.isDirty = function() {
-        var _ref, _ref1;
-        if ((_ref = this.collection) != null ? _ref.isDirty : void 0) {
-          return this.collection.isDirty();
-        }
-        if ((_ref1 = this.model) != null ? _ref1.isDirty : void 0) {
-          return this.model.isDirty();
-        }
-        return false;
       };
 
       BaseView._removeSubView = function(view) {
@@ -100,21 +72,16 @@
       };
 
       ToolbarView.prototype.initialize = function(options) {
-        this.collection.on('reset', this.render, this);
-        this.collection.on('add', this.render, this);
-        this.collection.on('remove', this.render, this);
-        this.collection.on('change', this.render, this);
+        this.listenTo(this.collection, 'reset', this.render);
+        this.listenTo(this.collection, 'add', this.render);
+        this.listenTo(this.collection, 'remove', this.render);
+        this.listenTo(this.collection, 'change', this.render);
         return ToolbarView.__super__.initialize.call(this, options);
       };
 
       ToolbarView.prototype.render = function() {
         this.removeSubViews();
         this.$el.html(this.template(this.collection.toJSON()));
-        if (this.collection.isValid() && this.collection.isDirty()) {
-          $('#save').enable();
-        } else {
-          $('#save').disable();
-        }
         return ToolbarView.__super__.render.call(this);
       };
 
@@ -159,12 +126,12 @@
       UserView.prototype.initialize = function(options) {
         if (options != null ? options.model : void 0) {
           this.model = options.model;
-          this.model.on('change', this.render, this);
+          this.listenTo(this.model, 'change', this.render);
           if (this.model.get('tasksUrl')) {
             this.tasks = new Collections.Todos({
               url: this.model.get('tasksUrl')
             });
-            this.tasks.on('reset', this.renderList, this);
+            this.listenTo(this.tasks, 'reset', this.renderList);
             this.tasks.fetch();
           }
         }
@@ -210,9 +177,9 @@
       TodoList.prototype.template = Handlebars.compile((_ref = $('#todo-list-template').html()) != null ? _ref : '');
 
       TodoList.prototype.initialize = function(options) {
-        this.collection.on('reset', this.render, this);
-        this.collection.on('add', this.render, this);
-        this.collection.on('remove', this.render, this);
+        this.listenTo(this.collection, 'reset', this.render);
+        this.listenTo(this.collection, 'add', this.render);
+        this.listenTo(this.collection, 'remove', this.render);
         return TodoList.__super__.initialize.call(this, options);
       };
 
@@ -255,7 +222,7 @@
       };
 
       TodoView.prototype.initialize = function(options) {
-        this.model.on('change', this.render, this);
+        this.listenTo(this.model, 'change', this.render);
         return TodoView.__super__.initialize.call(this, options);
       };
 

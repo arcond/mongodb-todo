@@ -21,18 +21,16 @@ define [
 
 		setup: ->
 			@toolbarView.remove()
-			@toolbarView.on 'users:add', =>
+			@toolbarView = new Views.ToolbarView collection: @users
+			@listenTo @toolbarView, 'users:add', =>
 				Backbone.history.navigate "#0", true
 				return
-			, @
-			@toolbarView.on 'users:select', (userModel) =>
+			@listenTo @toolbarView, 'users:select', (userModel) =>
 				Backbone.history.navigate "##{userModel.id}", true
 				return
-			, @
-			@toolbarView.on 'save-all', =>
+			@listenTo @toolbarView, 'save-all', =>
 				@users.save()
 				return
-			, @
 			@$el.html @toolbarView.render().el
 
 			@users.fetch()
@@ -43,15 +41,13 @@ define [
 			return
 
 		tasks: (userId) ->
+			@setup()
 			@userView.remove()
-			@users.on 'reset', =>
-				if userId then user = @users.get userId
+			@listenTo @users, 'reset', =>
+				if userId and userId isnt 0 and userId isnt '0' then user = @users.get userId
 				else user = new Models.User
 				@userView = new Views.UserView model: user
 				@$el.find('#user').html @userView.render().el
-				return
-			, @
-			@users.fetch()
 			return
 
 	{

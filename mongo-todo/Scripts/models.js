@@ -9,41 +9,9 @@
 
       __extends(BaseModel, _super);
 
-      BaseModel.prototype._preservedAttributes = {};
-
-      function BaseModel(attributes, options) {
-        BaseModel.__super__.constructor.call(this, attributes, options);
-        this._preservedAttributes = this.toJSON();
-        return;
+      function BaseModel() {
+        return BaseModel.__super__.constructor.apply(this, arguments);
       }
-
-      BaseModel.prototype.parse = function(response) {
-        response = BaseModel.__super__.parse.call(this, response);
-        this._preservedAttributes = this.toJSON();
-        return response;
-      };
-
-      BaseModel.prototype.isDirty = function() {
-        return !_.isEqual(this.toJSON(), this._preservedAttributes);
-      };
-
-      BaseModel.prototype.set = function(attributes, options) {
-        BaseModel.__super__.set.call(this, attributes, options);
-        if (this.isValid() === false && !this.has('invalid')) {
-          this.set('invalid', this.isValid());
-        } else if (this.isValid() && this.has('invalid')) {
-          this.unset('invalid', {
-            silent: true
-          });
-        }
-        if (this.isDirty() && !this.has('dirty')) {
-          this.set('dirty', this.isDirty());
-        } else if (!this.isDirty() && this.has('dirty')) {
-          this.unset('dirty', {
-            silent: true
-          });
-        }
-      };
 
       return BaseModel;
 
@@ -85,8 +53,10 @@
       };
 
       Todo.prototype.defaults = {
+        id: '',
         description: '',
-        completed: false
+        completed: false,
+        userId: ''
       };
 
       Todo.prototype.updateDescription = function(newDescription) {

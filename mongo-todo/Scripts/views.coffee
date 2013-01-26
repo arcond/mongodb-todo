@@ -12,19 +12,13 @@ define [
 			@subviews = []
 			super options
 
-		render: ->
-			@delegateEvents()
-			@
-
 		remove: ->
 			@trigger 'removed', @
 			@removeSubViews()
-			@off()
-			@undelegateEvents()
 			@$el.fadeOut 'fast', ->
 				$(@).remove()
 				return
-			return
+			super()
 
 		addSubView: (view, insertMethod = 'append', targetSelector = null) ->
 			@subviews.push view
@@ -38,16 +32,6 @@ define [
 			@subviews = []
 			return
 
-		isValid: ->
-			if @collection?.isValid then return @collection.isValid()
-			if @model?.isValid then return @model.isValid()
-			true
-
-		isDirty: ->
-			if @collection?.isDirty then return @collection.isDirty()
-			if @model?.isDirty then return @model.isDirty()
-			false
-
 		@_removeSubView: (view) ->
 			@subviews = _.without @subviews, view
 			return
@@ -60,17 +44,15 @@ define [
 			'click #save': 'save'
 
 		initialize: (options) ->
-			@collection.on 'reset', @render, @
-			@collection.on 'add', @render, @
-			@collection.on 'remove', @render, @
-			@collection.on 'change', @render, @
+			@listenTo @collection, 'reset', @render
+			@listenTo @collection, 'add', @render
+			@listenTo @collection, 'remove', @render
+			@listenTo @collection, 'change', @render
 			super options
 
 		render: ->
 			@removeSubViews()
 			@$el.html @template @collection.toJSON()
-			if @collection.isValid() and @collection.isDirty() then $('#save').enable()
-			else $('#save').disable()
 			super()
 
 		addUser: ->
@@ -98,10 +80,10 @@ define [
 		initialize: (options) ->
 			if options?.model
 				@model = options.model
-				@model.on 'change', @render, @
+				@listenTo @model, 'change', @render
 				if @model.get('tasksUrl')
 					@tasks = new Collections.Todos url: @model.get('tasksUrl')
-					@tasks.on 'reset', @renderList, @
+					@listenTo @tasks, 'reset', @renderList
 					@tasks.fetch()
 			super options
 
@@ -124,9 +106,9 @@ define [
 		template: Handlebars.compile $('#todo-list-template').html() ? ''
 
 		initialize: (options) ->
-			@collection.on 'reset', @render, @
-			@collection.on 'add', @render, @
-			@collection.on 'remove', @render, @
+			@listenTo @collection, 'reset', @render
+			@listenTo @collection, 'add', @render
+			@listenTo @collection, 'remove', @render
 			super options
 
 		render: ->
@@ -150,7 +132,7 @@ define [
 			'keyup input[type=checkbox]': 'toggleComplete'
 
 		initialize: (options) ->
-			@model.on 'change', @render, @
+			@listenTo @model, 'change', @render
 			super options
 
 		render: ->

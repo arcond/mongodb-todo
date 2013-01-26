@@ -4,21 +4,7 @@ define [
 	'models'
 ], (_, Backbone, Models) ->
 	class BaseCollection extends Backbone.Collection
-		isDirty: ->
-			unless @models then return false
-			dirties = @filter (model) ->
-				model.isDirty() is true if model.isDirty
-			dirties.length > 0
-
-		isValid: ->
-			unless @models then return true
-			invalids = @filter (model) ->
-				model.isValid() is false if model.isValid
-			invalids.length is 0
-
 		save: ->
-			models = @filter (model) ->
-				model.isDirty() is true
 			_.invoke models, 'save'
 			return
 

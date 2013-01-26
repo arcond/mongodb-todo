@@ -33,15 +33,18 @@
       Router.prototype.setup = function() {
         var _this = this;
         this.toolbarView.remove();
-        this.toolbarView.on('users:add', function() {
+        this.toolbarView = new Views.ToolbarView({
+          collection: this.users
+        });
+        this.listenTo(this.toolbarView, 'users:add', function() {
           Backbone.history.navigate("#0", true);
-        }, this);
-        this.toolbarView.on('users:select', function(userModel) {
+        });
+        this.listenTo(this.toolbarView, 'users:select', function(userModel) {
           Backbone.history.navigate("#" + userModel.id, true);
-        }, this);
-        this.toolbarView.on('save-all', function() {
+        });
+        this.listenTo(this.toolbarView, 'save-all', function() {
           _this.users.save();
-        }, this);
+        });
         this.$el.html(this.toolbarView.render().el);
         this.users.fetch();
       };
@@ -52,10 +55,11 @@
 
       Router.prototype.tasks = function(userId) {
         var _this = this;
+        this.setup();
         this.userView.remove();
-        this.users.on('reset', function() {
+        this.listenTo(this.users, 'reset', function() {
           var user;
-          if (userId) {
+          if (userId && userId !== 0 && userId !== '0') {
             user = _this.users.get(userId);
           } else {
             user = new Models.User;
@@ -63,9 +67,8 @@
           _this.userView = new Views.UserView({
             model: user
           });
-          _this.$el.find('#user').html(_this.userView.render().el);
-        }, this);
-        this.users.fetch();
+          return _this.$el.find('#user').html(_this.userView.render().el);
+        });
       };
 
       return Router;
