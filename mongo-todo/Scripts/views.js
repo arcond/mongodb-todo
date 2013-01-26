@@ -89,6 +89,10 @@
         this.trigger('users:add');
       };
 
+      ToolbarView.prototype.setUser = function(userId) {
+        this.$el.find("#select-user > option[value=" + userId + "]").attr('selected', 'selected');
+      };
+
       ToolbarView.prototype.selectUser = function(ev) {
         this.trigger('users:select', this.collection.get($(ev.target).val()));
       };

@@ -1,24 +1,28 @@
-﻿<div class="container">
-	<div class="row toolbar">
-		<div class="span3">
-			<div><label for="select-user">User:</label></div>
-			<div>
-				<select id="select-user">
-					<option value="0" selected="selected">Select...</option>
-					{{#each .}}
-					<option value="{{id}}">{{name}}</option>
-					{{/each}}
-				 </select>
+﻿<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container">
+			<div class="span3">
+				<div><label for="select-user">User:</label></div>
+				<div>
+					<select id="select-user">
+						<option value="0" selected="selected">Select...</option>
+						{{#each .}}
+						<option value="{{id}}">{{name}}</option>
+						{{/each}}
+					 </select>
+				</div>
+			</div>
+			<div class="span2">
+				<button id="create-user" class="btn">Create New User</button>
+			</div>
+			<div class="span1">&mdash;</div>
+			<div class="span2">
+				<button id="save" class="btn primary">Save</button>
 			</div>
 		</div>
-		<div class="span2">
-			<button id="create-user" class="btn">Create New User</button>
-		</div>
-		<div class="span1">&mdash;</div>
-		<div class="span2">
-			<button id="save" class="btn primary" disabled="disabled">Save</button>
-		</div>
 	</div>
+</div>
+<div class="container">
 	<div class="row">
 		<div id="user"></div>
 	</div>

@@ -67,7 +67,10 @@
           _this.userView = new Views.UserView({
             model: user
           });
-          return _this.$el.find('#user').html(_this.userView.render().el);
+          _this.$el.find('#user').html(_this.userView.render().el);
+          if (userId && userId !== 0 && userId !== '0') {
+            return _this.toolbarView.setUser(userId);
+          }
         });
       };
 

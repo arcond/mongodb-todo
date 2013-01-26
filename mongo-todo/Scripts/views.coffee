@@ -59,6 +59,10 @@ define [
 			@trigger 'users:add'
 			return
 
+		setUser: (userId) ->
+			@$el.find("#select-user > option[value=#{userId}]").attr 'selected', 'selected'
+			return
+
 		selectUser: (ev) ->
 			@trigger 'users:select', @collection.get $(ev.target).val()
 			return

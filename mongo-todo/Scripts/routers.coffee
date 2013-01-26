@@ -48,6 +48,7 @@ define [
 				else user = new Models.User
 				@userView = new Views.UserView model: user
 				@$el.find('#user').html @userView.render().el
+				@toolbarView.setUser userId if userId and userId isnt 0 and userId isnt '0'
 			return
 
 	{
