@@ -16,27 +16,46 @@ namespace Domain.Repository
 		public IQueryable<Task> GetAll(ObjectId userId)
 		{
 			var query = Query.EQ("_id", userId);
-			var user = GetUserCollection().FindOne(query);
-			user.SetContext(_context);
+			var user = GetCollection().FindOne(query);
 			return user.Tasks.AsQueryable();
 		}
 
 		public Task Get(ObjectId id)
 		{
-			var query = Query.EQ("_id", id);
-			var task = GetTaskCollection().FindOne(query);
-			task.SetContext(_context);
+			var query = Query.EQ("tasks._id", id);
+			var task = GetCollection().FindOne(query).Tasks.FirstOrDefault(x => x.Id.Equals(id));
 			return task;
 		}
 
-		private MongoCollection<User> GetUserCollection()
+		public Task Add(Task task)
 		{
-			return _context.Database.GetCollection<User>("users");
+			var query = Query.EQ("tasks._id", task.Id);
+			var user = GetCollection().FindOne(query);
+			user.AddTask(task);
+			GetCollection().Save(user);
+			return task;
 		}
 
-		private MongoCollection<Task> GetTaskCollection()
+		public Task Update(Task task)
 		{
-			return _context.Database.GetCollection<Task>("tasks");
+			var query = Query.EQ("tasks._id", task.Id);
+			var user = GetCollection().FindOne(query);
+			var todo = user.Tasks.FirstOrDefault(x => x.Id.Equals(task.Id));
+			todo.SetDescription(task.Description);
+			if (task.Completed != todo.Completed) todo.Toggle();
+			GetCollection().Save(user);
+			return task;
+		}
+
+		public void Delete(ObjectId id)
+		{
+			var query = Query.EQ("tasks._id", id);
+			GetCollection().Remove(query);
+		}
+
+		private MongoCollection<User> GetCollection()
+		{
+			return _context.Database.GetCollection<User>("users");
 		}
 	}
 }

@@ -16,7 +16,6 @@ namespace Domain.Repository
 		public IQueryable<User> GetAll()
 		{
 			var users = GetCollection().FindAll();
-			users.ToList().ForEach(x => x.SetContext(_context));
 			return users.AsQueryable();
 		}
 
@@ -24,8 +23,25 @@ namespace Domain.Repository
 		{
 			var query = Query.EQ("_id", id);
 			var user = GetCollection().FindOne(query);
-			user.SetContext(_context);
 			return user;
+		}
+
+		public User Add(User user)
+		{
+			GetCollection().Insert(user);
+			return user;
+		}
+
+		public User Update(User user)
+		{
+			GetCollection().Save(user);
+			return user;
+		}
+
+		public void Delete(ObjectId id)
+		{
+			var query = Query.EQ("_id", id);
+			GetCollection().Remove(query);
 		}
 
 		private MongoCollection<User> GetCollection()

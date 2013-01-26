@@ -1,5 +1,4 @@
-﻿using Domain.Model;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -51,6 +50,22 @@ namespace Domain.Repository
 				Name = "Specific User",
 				Tasks = _taskRepository.GetAll(id).ToList()
 			};
+		}
+
+
+		public User Add(User user)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public User Update(User user)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void Delete(ObjectId id)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

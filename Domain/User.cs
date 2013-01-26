@@ -31,11 +31,5 @@ namespace Domain
 		{
 			Tasks.Remove(task);
 		}
-
-		internal override void SetContext(IContext context)
-		{
-			base.SetContext(context);
-			Tasks.ToList().ForEach(x => x.SetContext(context));
-		} 
 	}
 }

@@ -1,5 +1,4 @@
-﻿using Domain.Model;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -35,6 +34,22 @@ namespace Domain.Repository
 				Description = "Specific Task",
 				Id = id
 			};
+		}
+
+
+		public Task Add(Task task)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public Task Update(Task task)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void Delete(ObjectId id)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using System.Configuration;
 
 namespace Domain.Data
 {
@@ -6,9 +7,10 @@ namespace Domain.Data
 	{
 		public Context()
 		{
-			var client = new MongoClient("");
+			var client = new MongoClient(ConfigurationManager.ConnectionStrings["mongodb"].ConnectionString);
 			var server = client.GetServer();
-			Database = server.GetDatabase("");
+			Database = server.GetDatabase("TodoSample");
+			var initializer = new Initializer(Database);
 		}
 
 		public MongoDatabase Database { get; private set; }

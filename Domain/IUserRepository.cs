@@ -1,5 +1,4 @@
-﻿using Domain.Model;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using System.Linq;
 
 namespace Domain
@@ -8,5 +7,8 @@ namespace Domain
 	{
 		IQueryable<User> GetAll();
 		User Get(ObjectId id);
+		User Add(User user);
+		User Update(User user);
+		void Delete(ObjectId id);
 	}
 }
