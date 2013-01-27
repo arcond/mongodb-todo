@@ -23,8 +23,10 @@ namespace mongo_todo
 
 			// register all your components with the container here
 			// e.g. container.RegisterType<ITestService, TestService>();
-			container.RegisterType<IUserRepository, DummyUserRepository>();
-			container.RegisterType<ITaskRepository, DummyTaskRepository>();
+			//container.RegisterType<IUserRepository, DummyUserRepository>();
+			//container.RegisterType<ITaskRepository, DummyTaskRepository>();
+			container.RegisterType<IUserRepository, UserRepository>();
+			container.RegisterType<ITaskRepository, TaskRepository>();
 			container.RegisterType<IUserFactory, UserFactory>();
 			container.RegisterType<ITaskFactory, TaskFactory>();
 			container.RegisterType<IContext, Context>();
