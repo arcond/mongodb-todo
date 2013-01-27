@@ -27,32 +27,6 @@ namespace Domain.Repository
 			return task;
 		}
 
-		public Task Add(Task task)
-		{
-			var query = Query.EQ("tasks._id", task.Id);
-			var user = GetCollection().FindOne(query);
-			user.AddTask(task);
-			GetCollection().Save(user);
-			return task;
-		}
-
-		public Task Update(Task task)
-		{
-			var query = Query.EQ("tasks._id", task.Id);
-			var user = GetCollection().FindOne(query);
-			var todo = user.Tasks.FirstOrDefault(x => x.Id.Equals(task.Id));
-			todo.SetDescription(task.Description);
-			if (task.Completed != todo.Completed) todo.Toggle();
-			GetCollection().Save(user);
-			return task;
-		}
-
-		public void Delete(ObjectId id)
-		{
-			var query = Query.EQ("tasks._id", id);
-			GetCollection().Remove(query);
-		}
-
 		private MongoCollection<User> GetCollection()
 		{
 			return _context.Database.GetCollection<User>("users");

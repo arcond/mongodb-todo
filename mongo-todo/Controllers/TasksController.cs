@@ -39,9 +39,11 @@ namespace mongo_todo.Controllers
 
 		public HttpResponseMessage Put(TaskModel task)
 		{
+			User user = null;
 			try {
-				var user = _userRepository.GetAll().First(x => x.Tasks.Any(y => y.Id.Equals(ObjectId.Parse(task.Id))));
+				user = _userRepository.GetAll().First(x => x.Tasks.Any(y => y.Id.Equals(ObjectId.Parse(task.Id))));
 				user.UpdateTask(ObjectId.Parse(task.Id), task.Description, task.Completed);
+				user = _userRepository.Update(user);
 			} catch (NullReferenceException) {
 				return new HttpResponseMessage(HttpStatusCode.Gone);
 			} catch {
@@ -52,9 +54,10 @@ namespace mongo_todo.Controllers
 
 		public TaskModel Post(TaskModel task)
 		{
-			var todo = _taskFactory.CreateTask(task.Description);
 			var user = _userRepository.Get(ObjectId.Parse(task.UserId));
+			var todo = _taskFactory.CreateTask(task.Description);
 			user.AddTask(todo);
+			user = _userRepository.Update(user);
 
 			return Mapper.Map<TaskModel>(todo);
 		}
@@ -63,13 +66,14 @@ namespace mongo_todo.Controllers
 		{
 			try {
 				var taskId = ObjectId.Parse(task.Id);
-				var user = _userRepository.GetAll().First(x => x.Tasks.Any(y => y.Id.Equals(taskId)));
-				var todo = user.Tasks.First(x => x.Id.Equals(taskId));
+				var user = _userRepository.Get(ObjectId.Parse(task.UserId));
+				var todo = _taskRepository.Get(taskId);
 				user.RemoveTask(todo);
+				_userRepository.Update(user);
 			} catch (NullReferenceException) {
 				return new HttpResponseMessage(HttpStatusCode.Gone);
 			} catch {
-				return new HttpResponseMessage(HttpStatusCode.BadRequest);
+				return new HttpResponseMessage(HttpStatusCode.InternalServerError);
 			}
 			return new HttpResponseMessage(HttpStatusCode.OK);
 		}

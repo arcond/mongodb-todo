@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
@@ -13,9 +14,11 @@ namespace mongo_todo.Controllers
 	public class UsersController :ApiController
 	{
 		private readonly IUserRepository _userRepository;
-		public UsersController(IUserRepository userRepository)
+		private readonly IUserFactory _userFactory;
+		public UsersController(IUserRepository userRepository, IUserFactory userFactory)
 		{
 			_userRepository = userRepository;
+			_userFactory = userFactory;
 		}
 
 		public IEnumerable<UserModel> Get()
@@ -30,17 +33,36 @@ namespace mongo_todo.Controllers
 
 		public HttpResponseMessage Put(UserModel user)
 		{
-			throw new NotImplementedException();
+			try {
+				var savedUser = _userRepository.Get(ObjectId.Parse(user.Id));
+				savedUser.SetName(user.Name);
+				_userRepository.Update(savedUser);
+			} catch (NullReferenceException) {
+				return new HttpResponseMessage(HttpStatusCode.Gone);
+			} catch {
+				return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+			}
+			return new HttpResponseMessage(HttpStatusCode.OK);
 		}
 
 		public UserModel Post(UserModel user)
 		{
-			throw new NotImplementedException();
+			var newUser = _userFactory.CreateUser(user.Name);
+			newUser = _userRepository.Add(newUser);
+
+			return Mapper.Map<UserModel>(newUser);
 		}
 
 		public HttpResponseMessage Delete(UserModel user)
 		{
-			throw new NotImplementedException();
+			try {
+				_userRepository.Delete(ObjectId.Parse(user.Id));
+			} catch (NullReferenceException) {
+				return new HttpResponseMessage(HttpStatusCode.Gone);
+			} catch {
+				return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+			}
+			return new HttpResponseMessage(HttpStatusCode.OK);
 		}
 	}
 }
