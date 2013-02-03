@@ -27,6 +27,7 @@ namespace mongo_todo.Controllers
 		{
 			var tasks = _taskRepository.GetAll(ObjectId.Parse(userId));
 			var models = Mapper.Map<IEnumerable<TaskModel>>(tasks);
+			models.ToList().ForEach(x => x.UserId = userId);
 			return models;
 		}
 
@@ -34,6 +35,7 @@ namespace mongo_todo.Controllers
 		{
 			var task = _taskRepository.Get(ObjectId.Parse(id));
 			var model = Mapper.Map<TaskModel>(task);
+			model.UserId = userId;
 			return model;
 		}
 
@@ -59,7 +61,9 @@ namespace mongo_todo.Controllers
 			user.AddTask(todo);
 			user = _userRepository.Update(user);
 
-			return Mapper.Map<TaskModel>(todo);
+			task = Mapper.Map<TaskModel>(todo);
+			task.UserId = user.Id.ToString();
+			return task;
 		}
 
 		public HttpResponseMessage Delete(TaskModel task)

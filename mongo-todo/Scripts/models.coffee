@@ -16,12 +16,18 @@ define [
 
 	class Todo extends BaseModel
 		urlRoot: ->
-			'/api/users/#{@get("userId")}/tasks'
+			"/api/users/#{@get('userId')}/tasks/#{@get('id')}"
 		defaults:
-			id: ''
 			description: ''
 			completed: false
 			userId: ''
+
+		initialize: (options) ->
+			if options?.urlRoot
+				@urlRoot = ->
+					options.urlRoot
+			@set 'userId', options.userId if options?.userId
+			super()
 
 		updateDescription: (newDescription) ->
 			@set 'description', newDescription

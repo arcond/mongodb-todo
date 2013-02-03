@@ -80,11 +80,11 @@ define [
 		template: Handlebars.compile $('#user-template').html() ? ''
 		events:
 			'keyup #user-name': 'updateUserName'
+			'click #save-user': 'saveUser'
 
 		initialize: (options) ->
 			if options?.model
 				@model = options.model
-				@listenTo @model, 'change', @render
 				if @model.get('tasksUrl')
 					@tasks = new Collections.Todos url: @model.get('tasksUrl')
 					@listenTo @tasks, 'reset', @renderList
@@ -97,13 +97,17 @@ define [
 			super()
 
 		renderList: ->
-			if @tasks?.length
-				list = new TodoList collection: @tasks
-				@addSubView list
+			list = new TodoList collection: @tasks, model: @model
+			@addSubView list
 			return
 
 		updateUserName: (ev) ->
 			@model.updateName $(ev.target).val()
+			return
+
+		saveUser: (ev) ->
+			ev.preventDefault() if ev?.preventDefault
+			@model.save()
 			return
 
 	class TodoList extends BaseView
@@ -122,21 +126,28 @@ define [
 
 		renderRows: ->
 			@removeSubViews()
-			@collection.filter (model) =>
+			console.log @collection
+			@collection.each (model) =>
 				view = new TodoView model: model
 				@addSubView view, 'append', 'ul'
+				return
+			view = new TodoView model: new Models.Todo(urlRoot: @collection.url, userId: @model.id)
+			@addSubView view, 'append', 'ul'
+			@listenTo view, 'add-task', (todo) =>
+				@collection.add todo
 				return
 			return
 
 	class TodoView extends BaseView
 		template: Handlebars.compile $('#todo-template').html() ? ''
 		events:
-			'keyup input[type=text]': 'updateDescription'
+			'keyup input.description': 'updateDescription'
 			'click input[type=checkbox]': 'toggleComplete'
 			'keyup input[type=checkbox]': 'toggleComplete'
+			'click .add-task': 'addTask'
 
 		initialize: (options) ->
-			@listenTo @model, 'change', @render
+			@listenTo @model, 'change:completed', @render
 			super options
 
 		render: ->
@@ -145,7 +156,13 @@ define [
 			super()
 
 		updateDescription: (ev) ->
+			console.log $(ev.target).val()
 			@model.updateDescription $(ev.target).val()
+			return
+
+		addTask: (ev) ->
+			ev.preventDefault() if ev?.preventDefault
+			@model.save()
 			return
 
 		toggleComplete: ->

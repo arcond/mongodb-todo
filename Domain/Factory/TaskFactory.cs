@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using System;
 
 namespace Domain.Factory
 {
@@ -9,7 +10,7 @@ namespace Domain.Factory
 			return new Task {
 				Completed = false,
 				Description = description,
-				Id = ObjectId.Empty
+				Id = ObjectId.GenerateNewId(DateTime.Now)
 			};
 		}
 	}

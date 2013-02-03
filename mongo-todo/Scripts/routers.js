@@ -43,7 +43,11 @@
           Backbone.history.navigate("#" + userModel.id, true);
         });
         this.listenTo(this.toolbarView, 'save-all', function() {
+          var _ref;
           _this.users.save();
+          if ((_ref = _this.userView) != null ? _ref.tasks : void 0) {
+            _this.userView.tasks.save();
+          }
         });
         this.$el.html(this.toolbarView.render().el);
         this.users.fetch();

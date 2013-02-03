@@ -5,7 +5,7 @@ define [
 ], (_, Backbone, Models) ->
 	class BaseCollection extends Backbone.Collection
 		save: ->
-			_.invoke models, 'save'
+			_.invoke @models, 'save'
 			return
 
 	class Users extends BaseCollection
@@ -19,6 +19,12 @@ define [
 		initialize: (options) ->
 			@url = options.url if options?.url
 			super options
+
+		parse: (response) ->
+			super response
+			_.each @models, (model) =>
+				model.urlRoot = @url
+			return
 
 		completed: ->
 			@filter (model) ->

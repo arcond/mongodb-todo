@@ -124,13 +124,13 @@
       UserView.prototype.template = Handlebars.compile((_ref = $('#user-template').html()) != null ? _ref : '');
 
       UserView.prototype.events = {
-        'keyup #user-name': 'updateUserName'
+        'keyup #user-name': 'updateUserName',
+        'click #save-user': 'saveUser'
       };
 
       UserView.prototype.initialize = function(options) {
         if (options != null ? options.model : void 0) {
           this.model = options.model;
-          this.listenTo(this.model, 'change', this.render);
           if (this.model.get('tasksUrl')) {
             this.tasks = new Collections.Todos({
               url: this.model.get('tasksUrl')
@@ -153,17 +153,23 @@
       };
 
       UserView.prototype.renderList = function() {
-        var list, _ref1;
-        if ((_ref1 = this.tasks) != null ? _ref1.length : void 0) {
-          list = new TodoList({
-            collection: this.tasks
-          });
-          this.addSubView(list);
-        }
+        var list;
+        list = new TodoList({
+          collection: this.tasks,
+          model: this.model
+        });
+        this.addSubView(list);
       };
 
       UserView.prototype.updateUserName = function(ev) {
         this.model.updateName($(ev.target).val());
+      };
+
+      UserView.prototype.saveUser = function(ev) {
+        if (ev != null ? ev.preventDefault : void 0) {
+          ev.preventDefault();
+        }
+        this.model.save();
       };
 
       return UserView;
@@ -194,14 +200,26 @@
       };
 
       TodoList.prototype.renderRows = function() {
-        var _this = this;
+        var view,
+          _this = this;
         this.removeSubViews();
-        this.collection.filter(function(model) {
+        console.log(this.collection);
+        this.collection.each(function(model) {
           var view;
           view = new TodoView({
             model: model
           });
           _this.addSubView(view, 'append', 'ul');
+        });
+        view = new TodoView({
+          model: new Models.Todo({
+            urlRoot: this.collection.url,
+            userId: this.model.id
+          })
+        });
+        this.addSubView(view, 'append', 'ul');
+        this.listenTo(view, 'add-task', function(todo) {
+          _this.collection.add(todo);
         });
       };
 
@@ -220,13 +238,14 @@
       TodoView.prototype.template = Handlebars.compile((_ref = $('#todo-template').html()) != null ? _ref : '');
 
       TodoView.prototype.events = {
-        'keyup input[type=text]': 'updateDescription',
+        'keyup input.description': 'updateDescription',
         'click input[type=checkbox]': 'toggleComplete',
-        'keyup input[type=checkbox]': 'toggleComplete'
+        'keyup input[type=checkbox]': 'toggleComplete',
+        'click .add-task': 'addTask'
       };
 
       TodoView.prototype.initialize = function(options) {
-        this.listenTo(this.model, 'change', this.render);
+        this.listenTo(this.model, 'change:completed', this.render);
         return TodoView.__super__.initialize.call(this, options);
       };
 
@@ -237,7 +256,15 @@
       };
 
       TodoView.prototype.updateDescription = function(ev) {
+        console.log($(ev.target).val());
         this.model.updateDescription($(ev.target).val());
+      };
+
+      TodoView.prototype.addTask = function(ev) {
+        if (ev != null ? ev.preventDefault : void 0) {
+          ev.preventDefault();
+        }
+        this.model.save();
       };
 
       TodoView.prototype.toggleComplete = function() {

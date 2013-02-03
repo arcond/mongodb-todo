@@ -49,14 +49,25 @@
       }
 
       Todo.prototype.urlRoot = function() {
-        return '/api/users/#{@get("userId")}/tasks';
+        return "/api/users/" + (this.get('userId')) + "/tasks/" + (this.get('id'));
       };
 
       Todo.prototype.defaults = {
-        id: '',
         description: '',
         completed: false,
         userId: ''
+      };
+
+      Todo.prototype.initialize = function(options) {
+        if (options != null ? options.urlRoot : void 0) {
+          this.urlRoot = function() {
+            return options.urlRoot;
+          };
+        }
+        if (options != null ? options.userId : void 0) {
+          this.set('userId', options.userId);
+        }
+        return Todo.__super__.initialize.call(this);
       };
 
       Todo.prototype.updateDescription = function(newDescription) {

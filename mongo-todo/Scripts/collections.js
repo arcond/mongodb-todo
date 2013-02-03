@@ -14,7 +14,7 @@
       }
 
       BaseCollection.prototype.save = function() {
-        _.invoke(models, 'save');
+        _.invoke(this.models, 'save');
       };
 
       return BaseCollection;
@@ -52,6 +52,14 @@
           this.url = options.url;
         }
         return Todos.__super__.initialize.call(this, options);
+      };
+
+      Todos.prototype.parse = function(response) {
+        var _this = this;
+        Todos.__super__.parse.call(this, response);
+        _.each(this.models, function(model) {
+          return model.urlRoot = _this.url;
+        });
       };
 
       Todos.prototype.completed = function() {

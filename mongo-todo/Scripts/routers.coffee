@@ -30,6 +30,7 @@ define [
 				return
 			@listenTo @toolbarView, 'save-all', =>
 				@users.save()
+				@userView.tasks.save() if @userView?.tasks
 				return
 			@$el.html @toolbarView.render().el
 
