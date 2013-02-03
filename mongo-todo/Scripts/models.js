@@ -49,7 +49,7 @@
       }
 
       Todo.prototype.urlRoot = function() {
-        return "/api/users/" + (this.get('userId')) + "/tasks/" + (this.get('id'));
+        return "/api/users/" + (this.get('userId')) + "/tasks";
       };
 
       Todo.prototype.defaults = {
@@ -59,11 +59,6 @@
       };
 
       Todo.prototype.initialize = function(options) {
-        if (options != null ? options.urlRoot : void 0) {
-          this.urlRoot = function() {
-            return options.urlRoot;
-          };
-        }
         if (options != null ? options.userId : void 0) {
           this.set('userId', options.userId);
         }

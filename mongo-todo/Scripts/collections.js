@@ -54,14 +54,6 @@
         return Todos.__super__.initialize.call(this, options);
       };
 
-      Todos.prototype.parse = function(response) {
-        var _this = this;
-        Todos.__super__.parse.call(this, response);
-        _.each(this.models, function(model) {
-          return model.urlRoot = _this.url;
-        });
-      };
-
       Todos.prototype.completed = function() {
         return this.filter(function(model) {
           return model.get('completed') === true;

@@ -20,12 +20,6 @@ define [
 			@url = options.url if options?.url
 			super options
 
-		parse: (response) ->
-			super response
-			_.each @models, (model) =>
-				model.urlRoot = @url
-			return
-
 		completed: ->
 			@filter (model) ->
 				model.get('completed') is true

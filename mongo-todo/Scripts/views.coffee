@@ -6,6 +6,12 @@ define [
 	'collections'
 ], ($, _, Backbone, Models, Collections) ->
 	class BaseView extends Backbone.View
+		render: ->
+			super()
+			@trigger 'rendered'
+			@
+
+	class ParentView extends BaseView
 		subviews: []
 
 		constructor: (options) ->
@@ -36,6 +42,82 @@ define [
 			@subviews = _.without @subviews, view
 			return
 
+	class MainView extends ParentView
+		el: '#main-content'
+
+		initialize: (options) ->
+			@userId = options.userId if options?.userId
+			@users = new Collections.Users
+			@todos = new Collections.Todos
+			@user = new Models.User
+			@toolbarView = new ToolbarView collection: @users
+			@userView = new UserView
+			@todoListView = new TodoListView
+			@listenTo @users, 'reset', =>
+				@user = @users.get @userId
+				@renderToolbar()
+				return
+			super options
+
+		render: ->
+			super()
+			@users.fetch()
+			@
+
+		renderToolbar: ->
+			@toolbarView.remove()
+			@toolbarView = new ToolbarView collection: @users
+			@listenTo @toolbarView, 'users:add', =>
+				@user = new Models.User
+				@renderUser()
+				Backbone.history.navigate "#0", false
+				return
+			@listenTo @toolbarView, 'users:select', (userModel) =>
+				@user = userModel
+				@renderUser()
+				Backbone.history.navigate "##{@user.id}", false
+				return
+			@listenTo @toolbarView, 'save-all', =>
+				@users.save()
+				@todos.save() if @todos
+				return
+			@addSubView @toolbarView, 'html'
+			@toolbarView.setUser @user.id if @user?.id
+			@renderUser() if @userId
+			@
+
+		renderUser: ->
+			@userView.remove()
+			@userView = new UserView model: @user
+			@listenTo @user, 'reset', =>
+				Backbone.history.navigate "##{@user.id}", true
+				return
+			@listenTo @userView, 'rendered', =>
+				@todos = new Collections.Todos url: @user.get('tasksUrl')
+				@listenTo @todos, 'reset', @renderTodos
+				@renderTodos()
+				@todos.fetch()
+				return
+			@addSubView @userView, 'html', '#user'
+			@
+
+		renderTodos: ->
+			@todoListView.remove()
+			@todoListView = new TodoListView collection: @todos
+			@addSubView @todoListView
+			@listenTo @todoListView, 'rendered', @renderTodo
+			@
+
+		renderTodo: ->
+			@todos.each (todoModel) =>
+				view = new TodoView model: todoModel
+				@addSubView view, 'append', 'ul'
+				return
+			view = new TodoView model: new Models.Todo(urlRoot: @todos.url, userId: @user.id)
+			@addSubView view, 'append', 'ul'
+			@
+
+
 	class ToolbarView extends BaseView
 		template: Handlebars.compile $('#toolbar-template').html() ? ''
 		events:
@@ -51,7 +133,6 @@ define [
 			super options
 
 		render: ->
-			@removeSubViews()
 			@$el.html @template @collection.toJSON()
 			super()
 
@@ -82,24 +163,9 @@ define [
 			'keyup #user-name': 'updateUserName'
 			'click #save-user': 'saveUser'
 
-		initialize: (options) ->
-			if options?.model
-				@model = options.model
-				if @model.get('tasksUrl')
-					@tasks = new Collections.Todos url: @model.get('tasksUrl')
-					@listenTo @tasks, 'reset', @renderList
-					@tasks.fetch()
-			super options
-
 		render: ->
-			@removeSubViews()
 			if @model then @$el.html @template @model.toJSON() else @$el.html @template()
 			super()
-
-		renderList: ->
-			list = new TodoList collection: @tasks, model: @model
-			@addSubView list
-			return
 
 		updateUserName: (ev) ->
 			@model.updateName $(ev.target).val()
@@ -110,33 +176,19 @@ define [
 			@model.save()
 			return
 
-	class TodoList extends BaseView
+	class TodoListView extends BaseView
 		template: Handlebars.compile $('#todo-list-template').html() ? ''
 
 		initialize: (options) ->
-			@listenTo @collection, 'reset', @render
-			@listenTo @collection, 'add', @render
-			@listenTo @collection, 'remove', @render
+			if @collection
+				@listenTo @collection, 'reset', @render
+				@listenTo @collection, 'add', @render
+				@listenTo @collection, 'remove', @render
 			super options
 
 		render: ->
 			@$el.html @template()
-			@renderRows()
 			super()
-
-		renderRows: ->
-			@removeSubViews()
-			console.log @collection
-			@collection.each (model) =>
-				view = new TodoView model: model
-				@addSubView view, 'append', 'ul'
-				return
-			view = new TodoView model: new Models.Todo(urlRoot: @collection.url, userId: @model.id)
-			@addSubView view, 'append', 'ul'
-			@listenTo view, 'add-task', (todo) =>
-				@collection.add todo
-				return
-			return
 
 	class TodoView extends BaseView
 		template: Handlebars.compile $('#todo-template').html() ? ''
@@ -151,7 +203,6 @@ define [
 			super options
 
 		render: ->
-			@removeSubViews()
 			@$el.html @template @model.toJSON()
 			super()
 
@@ -170,6 +221,5 @@ define [
 			return
 
 	{
-		ToolbarView: ToolbarView
-		UserView: UserView
+		MainView: MainView
 	}

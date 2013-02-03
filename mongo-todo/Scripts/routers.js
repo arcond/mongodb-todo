@@ -13,69 +13,28 @@
         return Router.__super__.constructor.apply(this, arguments);
       }
 
-      Router.prototype.$el = null;
-
       Router.prototype.routes = {
         '': 'root',
         ':userId': 'tasks'
       };
 
       Router.prototype.initialize = function(options) {
-        this.$el = $('#main-content');
-        this.users = new Collections.Users;
-        this.toolbarView = new Views.ToolbarView({
-          collection: this.users
-        });
-        this.userView = new Views.UserView;
+        this.masterView = new Views.MainView;
         return Router.__super__.initialize.call(this, options);
       };
 
-      Router.prototype.setup = function() {
-        var _this = this;
-        this.toolbarView.remove();
-        this.toolbarView = new Views.ToolbarView({
-          collection: this.users
-        });
-        this.listenTo(this.toolbarView, 'users:add', function() {
-          Backbone.history.navigate("#0", true);
-        });
-        this.listenTo(this.toolbarView, 'users:select', function(userModel) {
-          Backbone.history.navigate("#" + userModel.id, true);
-        });
-        this.listenTo(this.toolbarView, 'save-all', function() {
-          var _ref;
-          _this.users.save();
-          if ((_ref = _this.userView) != null ? _ref.tasks : void 0) {
-            _this.userView.tasks.save();
-          }
-        });
-        this.$el.html(this.toolbarView.render().el);
-        this.users.fetch();
-      };
-
       Router.prototype.root = function() {
-        this.setup();
+        this.masterView.removeSubViews();
+        this.masterView = new Views.MainView;
+        this.masterView.render();
       };
 
       Router.prototype.tasks = function(userId) {
-        var _this = this;
-        this.setup();
-        this.userView.remove();
-        this.listenTo(this.users, 'reset', function() {
-          var user;
-          if (userId && userId !== 0 && userId !== '0') {
-            user = _this.users.get(userId);
-          } else {
-            user = new Models.User;
-          }
-          _this.userView = new Views.UserView({
-            model: user
-          });
-          _this.$el.find('#user').html(_this.userView.render().el);
-          if (userId && userId !== 0 && userId !== '0') {
-            return _this.toolbarView.setUser(userId);
-          }
+        this.masterView.removeSubViews();
+        this.masterView = new Views.MainView({
+          userId: userId
         });
+        this.masterView.render();
       };
 
       return Router;
