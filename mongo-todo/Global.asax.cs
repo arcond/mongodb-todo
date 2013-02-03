@@ -14,11 +14,6 @@ namespace mongo_todo
 	{
 		protected void Application_Start()
 		{
-			for (int i = 0; i < 5; i++) {
-				DummyGlobal.Instance.BaseUserObjectId.Add(ObjectId.GenerateNewId());
-				DummyGlobal.Instance.BaseTaskObjectId.Add(ObjectId.GenerateNewId());
-			}
-
 			AreaRegistration.RegisterAllAreas();
 
 			WebApiConfig.Register(GlobalConfiguration.Configuration);
