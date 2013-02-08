@@ -3,7 +3,6 @@ using Domain;
 using mongo_todo.Models;
 using MongoDB.Bson;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -21,14 +20,35 @@ namespace mongo_todo.Controllers
 			_userFactory = userFactory;
 		}
 
-		public IEnumerable<UserModel> Get()
+		public HttpResponseMessage Get()
 		{
-			return Mapper.Map<IEnumerable<UserModel>>(_userRepository.GetAll().ToList());
+			UserModel[] users = null;
+
+			try {
+				users = Mapper.Map<UserModel[]>(_userRepository.GetAll().ToArray());
+			} catch (Exception ex) {
+				return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+			}
+
+			var response = this.Request.CreateResponse(HttpStatusCode.OK, users);
+			response.Headers.Add("Type", users.GetType().Name);
+			return response;
 		}
 
-		public UserModel Get(string id)
+		public HttpResponseMessage Get(string id)
 		{
-			return Mapper.Map<UserModel>(_userRepository.Get(ObjectId.Parse(id)));
+			UserModel user = null;
+
+			try {
+				user = Mapper.Map<UserModel>(_userRepository.Get(ObjectId.Parse(id)));
+			} catch (Exception ex) {
+				return this.Request.CreateResponse(HttpStatusCode.NotFound, ex.Message);
+			}
+
+			var response = this.Request.CreateResponse(HttpStatusCode.OK, user);
+			response.Headers.Add("Link", string.Format("{0}/tasks", this.Request.RequestUri.AbsoluteUri));
+			response.Headers.Add("Type", user.GetType().Name);
+			return response;
 		}
 
 		public HttpResponseMessage Put(UserModel user)
@@ -37,32 +57,44 @@ namespace mongo_todo.Controllers
 				var savedUser = _userRepository.Get(ObjectId.Parse(user.Id));
 				savedUser.SetName(user.Name);
 				_userRepository.Update(savedUser);
-			} catch (NullReferenceException) {
-				return new HttpResponseMessage(HttpStatusCode.Gone);
-			} catch {
-				return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+			} catch (NullReferenceException ex) {
+				return this.Request.CreateResponse(HttpStatusCode.Gone, ex.Message);
+			} catch (Exception ex) {
+				return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
 			}
-			return new HttpResponseMessage(HttpStatusCode.OK);
+
+			var response = this.Request.CreateResponse(HttpStatusCode.OK);
+			return response;
 		}
 
-		public UserModel Post(UserModel user)
+		public HttpResponseMessage Post(UserModel user)
 		{
 			var newUser = _userFactory.CreateUser(user.Name);
-			newUser = _userRepository.Add(newUser);
 
-			return Mapper.Map<UserModel>(newUser);
+			try {
+				newUser = _userRepository.Add(newUser);
+			} catch (Exception ex) {
+				return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+			}
+
+			var response = this.Request.CreateResponse(HttpStatusCode.Created);
+			response.Headers.Location = new Uri(string.Format("{0}/{1}", this.Request.RequestUri.AbsoluteUri, newUser.Id));
+			response.Headers.Add("Link", string.Format("{0}/tasks", response.Headers.Location));
+			response.Headers.Add("Type", newUser.GetType().Name);
+			return response;
 		}
 
 		public HttpResponseMessage Delete(UserModel user)
 		{
 			try {
 				_userRepository.Delete(ObjectId.Parse(user.Id));
-			} catch (NullReferenceException) {
-				return new HttpResponseMessage(HttpStatusCode.Gone);
-			} catch {
-				return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+			} catch (NullReferenceException ex) {
+				return this.Request.CreateResponse(HttpStatusCode.NotFound, ex.Message);
+			} catch (Exception ex) {
+				return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
 			}
-			return new HttpResponseMessage(HttpStatusCode.OK);
+
+			return this.Request.CreateResponse(HttpStatusCode.OK);
 		}
 	}
 }
