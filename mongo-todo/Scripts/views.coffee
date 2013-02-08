@@ -88,17 +88,19 @@ define [
 
 		renderUser: ->
 			@userView.remove()
+			@todoListView.remove()
 			@userView = new UserView model: @user
 			@listenTo @user, 'reset', =>
 				Backbone.history.navigate "##{@user.id}", true
 				return
 			@listenTo @userView, 'rendered', =>
-				@todos = new Collections.Todos url: @user.get('tasksUrl')
-				@listenTo @todos, 'reset', @renderTodos
-				@renderTodos()
-				@todos.fetch()
+				if @user and @user.get('tasksUrl')
+					@todos = new Collections.Todos url: @user.get('tasksUrl')
+					@listenTo @todos, 'reset', @renderTodos
+					@renderTodos()
+					@todos.fetch()
 				return
-			@addSubView @userView, 'html', '#user'
+			@addSubView @userView
 			@
 
 		renderTodos: ->
@@ -111,14 +113,14 @@ define [
 		renderTodo: ->
 			@todos.each (todoModel) =>
 				view = new TodoView model: todoModel
-				@addSubView view, 'append', 'ul'
+				@addSubView view, 'append', 'ul.todos'
 				return
 			view = new TodoView model: new Models.Todo(urlRoot: @todos.url, userId: @user.id)
-			@addSubView view, 'append', 'ul'
+			@addSubView view, 'append', 'ul.todos'
 			@
 
-
 	class ToolbarView extends BaseView
+		className: 'navbar navbar-fixed-top'
 		template: Handlebars.compile $('#toolbar-template').html() ? ''
 		events:
 			'click #create-user': 'addUser'
@@ -136,7 +138,8 @@ define [
 			@$el.html @template @collection.toJSON()
 			super()
 
-		addUser: ->
+		addUser: (ev) ->
+			ev.preventDefault() if ev?.preventDefault
 			@trigger 'users:add'
 			return
 
@@ -158,6 +161,7 @@ define [
 			return
 
 	class UserView extends BaseView
+		className: 'container'
 		template: Handlebars.compile $('#user-template').html() ? ''
 		events:
 			'keyup #user-name': 'updateUserName'
@@ -177,6 +181,7 @@ define [
 			return
 
 	class TodoListView extends BaseView
+		className: 'container'
 		template: Handlebars.compile $('#todo-list-template').html() ? ''
 
 		initialize: (options) ->
@@ -191,6 +196,8 @@ define [
 			super()
 
 	class TodoView extends BaseView
+		className: 'row'
+		tagName: 'li'
 		template: Handlebars.compile $('#todo-template').html() ? ''
 		events:
 			'keyup input.description': 'updateDescription'

@@ -143,6 +143,7 @@
       MainView.prototype.renderUser = function() {
         var _this = this;
         this.userView.remove();
+        this.todoListView.remove();
         this.userView = new UserView({
           model: this.user
         });
@@ -150,14 +151,16 @@
           Backbone.history.navigate("#" + _this.user.id, true);
         });
         this.listenTo(this.userView, 'rendered', function() {
-          _this.todos = new Collections.Todos({
-            url: _this.user.get('tasksUrl')
-          });
-          _this.listenTo(_this.todos, 'reset', _this.renderTodos);
-          _this.renderTodos();
-          _this.todos.fetch();
+          if (_this.user && _this.user.get('tasksUrl')) {
+            _this.todos = new Collections.Todos({
+              url: _this.user.get('tasksUrl')
+            });
+            _this.listenTo(_this.todos, 'reset', _this.renderTodos);
+            _this.renderTodos();
+            _this.todos.fetch();
+          }
         });
-        this.addSubView(this.userView, 'html', '#user');
+        this.addSubView(this.userView);
         return this;
       };
 
@@ -179,7 +182,7 @@
           view = new TodoView({
             model: todoModel
           });
-          _this.addSubView(view, 'append', 'ul');
+          _this.addSubView(view, 'append', 'ul.todos');
         });
         view = new TodoView({
           model: new Models.Todo({
@@ -187,7 +190,7 @@
             userId: this.user.id
           })
         });
-        this.addSubView(view, 'append', 'ul');
+        this.addSubView(view, 'append', 'ul.todos');
         return this;
       };
 
@@ -202,6 +205,8 @@
       function ToolbarView() {
         return ToolbarView.__super__.constructor.apply(this, arguments);
       }
+
+      ToolbarView.prototype.className = 'navbar navbar-fixed-top';
 
       ToolbarView.prototype.template = Handlebars.compile((_ref = $('#toolbar-template').html()) != null ? _ref : '');
 
@@ -224,7 +229,10 @@
         return ToolbarView.__super__.render.call(this);
       };
 
-      ToolbarView.prototype.addUser = function() {
+      ToolbarView.prototype.addUser = function(ev) {
+        if (ev != null ? ev.preventDefault : void 0) {
+          ev.preventDefault();
+        }
         this.trigger('users:add');
       };
 
@@ -259,6 +267,8 @@
       function UserView() {
         return UserView.__super__.constructor.apply(this, arguments);
       }
+
+      UserView.prototype.className = 'container';
 
       UserView.prototype.template = Handlebars.compile((_ref = $('#user-template').html()) != null ? _ref : '');
 
@@ -299,6 +309,8 @@
         return TodoListView.__super__.constructor.apply(this, arguments);
       }
 
+      TodoListView.prototype.className = 'container';
+
       TodoListView.prototype.template = Handlebars.compile((_ref = $('#todo-list-template').html()) != null ? _ref : '');
 
       TodoListView.prototype.initialize = function(options) {
@@ -326,6 +338,10 @@
       function TodoView() {
         return TodoView.__super__.constructor.apply(this, arguments);
       }
+
+      TodoView.prototype.className = 'row';
+
+      TodoView.prototype.tagName = 'li';
 
       TodoView.prototype.template = Handlebars.compile((_ref = $('#todo-template').html()) != null ? _ref : '');
 

@@ -1,9 +1,7 @@
-﻿<li class="row">
-	<div class="span1">
-		<input type="checkbox" {{#if completed}}checked="checked"{{/if}} />
-	</div>
-	<div class="span4">
-		<input class="description" value="{{description}}" placeholder="{{#if description}}{{description}}{{else}}Task...{{/if}}" />
-		{{#unless id}}<button class="add-task">Add Task</button>{{/unless}}
-	</div>
-</li>
+﻿<div class="span1">
+	<input type="checkbox" {{#if completed}}checked="checked"{{/if}} />
+</div>
+<div class="span4">
+	<input class="description" value="{{description}}" placeholder="{{#if description}}{{description}}{{else}}Task...{{/if}}" />
+	{{#unless id}}<button class="add-task">Add Task</button>{{/unless}}
+</div>
