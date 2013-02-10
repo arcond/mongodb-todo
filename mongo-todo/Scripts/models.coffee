@@ -8,8 +8,21 @@ define [
 			super options
 			return
 
-		fetch: (options) ->
-			xhr = super options
+		sync: (method, model, options) ->
+			xhr = super method, model, options
+			xhr.always (data) =>
+				if xhr.status is 201
+					locationHeader = xhr.getResponseHeader 'Location'
+					if locationHeader
+						idx = locationHeader.lastIndexOf '/'
+						idx += 1
+						if locationHeader.length <= idx
+							locationHeader = locationHeader.substring 0, locationHeader.length - 2
+							idx = locationHeader.lastIndexOf '/'
+							idx += 1
+						newId = locationHeader.substring idx
+						@set 'id', newId
+				return
 			xhr.done (data) =>
 				linkHeader = xhr.getResponseHeader 'Link'
 				if linkHeader
@@ -26,7 +39,7 @@ define [
 
 						@references[rel] = url
 						return
-				@trigger 'change:headers'
+					@trigger 'change:headers'
 				return
 			xhr
 

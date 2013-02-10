@@ -111,9 +111,16 @@ define [
 					view = new TodoView model: todoModel
 					@addSubView view, 'append', 'ul.todos'
 					return
-				view = new TodoView model: new Models.Todo(urlRoot: @user.references.TaskModels)
-				@addSubView view, 'append', 'ul.todos'
+			@renderNewTodo()
 			@
+
+		renderNewTodo: ->
+			newTodo = new Models.Todo urlRoot: @user.references.TaskModels
+			@listenTo newTodo, 'change:id', =>
+				@todos.add newTodo
+				return
+			view = new TodoView model: newTodo
+			@addSubView view, 'append', 'ul.todos'
 
 		setUser: (user) ->
 			if user
@@ -211,9 +218,7 @@ define [
 
 		initialize: (options) ->
 			@listenTo @model, 'change:completed', @render
-			# @listenTo @model, 'change:id', =>
-			# 	console.log @model.toJSON()
-			# 	return
+			@listenTo @model, 'change:id', @render
 			super options
 
 		render: ->

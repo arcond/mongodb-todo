@@ -15,10 +15,27 @@
         return;
       }
 
-      BaseModel.prototype.fetch = function(options) {
+      BaseModel.prototype.sync = function(method, model, options) {
         var xhr,
           _this = this;
-        xhr = BaseModel.__super__.fetch.call(this, options);
+        xhr = BaseModel.__super__.sync.call(this, method, model, options);
+        xhr.always(function(data) {
+          var idx, locationHeader, newId;
+          if (xhr.status === 201) {
+            locationHeader = xhr.getResponseHeader('Location');
+            if (locationHeader) {
+              idx = locationHeader.lastIndexOf('/');
+              idx += 1;
+              if (locationHeader.length <= idx) {
+                locationHeader = locationHeader.substring(0, locationHeader.length - 2);
+                idx = locationHeader.lastIndexOf('/');
+                idx += 1;
+              }
+              newId = locationHeader.substring(idx);
+              _this.set('id', newId);
+            }
+          }
+        });
         xhr.done(function(data) {
           var linkHeader, links;
           linkHeader = xhr.getResponseHeader('Link');
@@ -34,8 +51,8 @@
               rel = relParts[1].replace('[]', 's');
               _this.references[rel] = url;
             });
+            _this.trigger('change:headers');
           }
-          _this.trigger('change:headers');
         });
         return xhr;
       };

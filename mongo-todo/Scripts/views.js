@@ -173,7 +173,7 @@
       };
 
       MainView.prototype.renderTodo = function() {
-        var view, _ref, _ref1,
+        var _ref, _ref1,
           _this = this;
         if ((_ref = this.user) != null ? (_ref1 = _ref.references) != null ? _ref1.TaskModels : void 0 : void 0) {
           this.todos.each(function(todoModel) {
@@ -184,14 +184,24 @@
             });
             _this.addSubView(view, 'append', 'ul.todos');
           });
-          view = new TodoView({
-            model: new Models.Todo({
-              urlRoot: this.user.references.TaskModels
-            })
-          });
-          this.addSubView(view, 'append', 'ul.todos');
         }
+        this.renderNewTodo();
         return this;
+      };
+
+      MainView.prototype.renderNewTodo = function() {
+        var newTodo, view,
+          _this = this;
+        newTodo = new Models.Todo({
+          urlRoot: this.user.references.TaskModels
+        });
+        this.listenTo(newTodo, 'change:id', function() {
+          _this.todos.add(newTodo);
+        });
+        view = new TodoView({
+          model: newTodo
+        });
+        return this.addSubView(view, 'append', 'ul.todos');
       };
 
       MainView.prototype.setUser = function(user) {
@@ -364,6 +374,7 @@
 
       TodoView.prototype.initialize = function(options) {
         this.listenTo(this.model, 'change:completed', this.render);
+        this.listenTo(this.model, 'change:id', this.render);
         return TodoView.__super__.initialize.call(this, options);
       };
 
