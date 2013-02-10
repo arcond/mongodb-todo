@@ -373,7 +373,6 @@
       };
 
       TodoView.prototype.updateDescription = function(ev) {
-        console.log($(ev.target).val());
         this.model.updateDescription($(ev.target).val());
       };
 

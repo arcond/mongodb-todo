@@ -221,7 +221,6 @@ define [
 			super()
 
 		updateDescription: (ev) ->
-			console.log $(ev.target).val()
 			@model.updateDescription $(ev.target).val()
 			return
 
