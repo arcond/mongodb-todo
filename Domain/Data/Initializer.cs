@@ -8,9 +8,11 @@ namespace Domain.Data
 		public Initializer(MongoDatabase database)
 		{
 			_database = database;
-			if (!_database.CollectionExists("users")) {
+			if (!_database.CollectionExists("users"))
 				_database.CreateCollection("users");
-			}
+
+			if (!_database.CollectionExists("todos"))
+				_database.CreateCollection("todos");
 		}
 	}
 }

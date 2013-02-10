@@ -1,16 +1,16 @@
 ﻿using MongoDB.Bson;
-using System;
 
 namespace Domain.Factory
 {
 	public class TaskFactory :ITaskFactory
 	{
-		public Task CreateTask(string description)
+		public Task CreateTask(ObjectId userId, string description)
 		{
 			return new Task {
 				Completed = false,
 				Description = description,
-				Id = ObjectId.GenerateNewId(DateTime.Now)
+				Id = ObjectId.Empty,
+				UserId = userId
 			};
 		}
 	}

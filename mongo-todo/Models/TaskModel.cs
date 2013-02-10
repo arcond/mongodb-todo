@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace mongo_todo.Models
 {
@@ -11,7 +10,5 @@ namespace mongo_todo.Models
 		public string Description { get; set; }
 
 		public bool Completed { get; set; }
-
-		public string UserId { get; set; }
 	}
 }

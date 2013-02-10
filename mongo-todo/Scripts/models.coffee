@@ -3,6 +3,32 @@ define [
 	'backbone'
 ], (_, Backbone) ->
 	class BaseModel extends Backbone.Model
+		constructor: (options) ->
+			@references = {}
+			super options
+			return
+
+		fetch: (options) ->
+			xhr = super options
+			xhr.done (data) =>
+				linkHeader = xhr.getResponseHeader 'Link'
+				if linkHeader
+					links = linkHeader.split ','
+					@references = @references
+					_.each links, (link) =>
+						parts = link.split ';'
+
+						url = parts[0].replace '<', ''
+						url = url.replace '>', ''
+
+						relParts = parts[1].split '='
+						rel = relParts[1].replace '[]', 's'
+
+						@references[rel] = url
+						return
+				@trigger 'change:headers'
+				return
+			xhr
 
 	class User extends BaseModel
 		urlRoot: '/api/users'
@@ -15,16 +41,15 @@ define [
 				name: newName
 
 	class Todo extends BaseModel
-		urlRoot: ->
-			"/api/users/#{@get('userId')}/tasks"
 		defaults:
 			description: ''
 			completed: false
-			userId: ''
 
 		initialize: (options) ->
-			@set 'userId', options.userId if options?.userId
-			super()
+			if options?.urlRoot
+				@urlRoot = ->
+					options.urlRoot
+			super options
 
 		updateDescription: (newDescription) ->
 			@set 'description', newDescription

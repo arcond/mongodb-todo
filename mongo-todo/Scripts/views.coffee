@@ -49,12 +49,11 @@ define [
 			@userId = options.userId if options?.userId
 			@users = new Collections.Users
 			@todos = new Collections.Todos
-			@user = new Models.User
+			if @userId then @setUser new Models.User id: @userId else @setUser new Models.User
 			@toolbarView = new ToolbarView collection: @users
 			@userView = new UserView
 			@todoListView = new TodoListView
 			@listenTo @users, 'reset', =>
-				@user = @users.get @userId
 				@renderToolbar()
 				return
 			super options
@@ -70,34 +69,28 @@ define [
 			@listenTo @toolbarView, 'users:add', =>
 				@user = new Models.User
 				@renderUser()
-				Backbone.history.navigate "#0", false
 				return
 			@listenTo @toolbarView, 'users:select', (userModel) =>
-				@user = userModel
-				@renderUser()
+				@setUser userModel
+				@user.fetch()
 				Backbone.history.navigate "##{@user.id}", false
 				return
 			@listenTo @toolbarView, 'save-all', =>
-				@users.save()
+				@user.save()
 				@todos.save() if @todos
 				return
 			@addSubView @toolbarView, 'html'
-			@toolbarView.setUser @user.id if @user?.id
-			@renderUser() if @userId
+			@user.fetch() if @userId
 			@
 
 		renderUser: ->
 			@userView.remove()
 			@todoListView.remove()
 			@userView = new UserView model: @user
-			@listenTo @user, 'reset', =>
-				Backbone.history.navigate "##{@user.id}", true
-				return
 			@listenTo @userView, 'rendered', =>
-				if @user and @user.get('tasksUrl')
-					@todos = new Collections.Todos url: @user.get('tasksUrl')
+				if @user?.references?.TaskModels
+					@todos = new Collections.Todos url: @user.references.TaskModels
 					@listenTo @todos, 'reset', @renderTodos
-					@renderTodos()
 					@todos.fetch()
 				return
 			@addSubView @userView
@@ -108,16 +101,27 @@ define [
 			@todoListView = new TodoListView collection: @todos
 			@addSubView @todoListView
 			@listenTo @todoListView, 'rendered', @renderTodo
+			@addSubView @todoListView
 			@
 
 		renderTodo: ->
-			@todos.each (todoModel) =>
-				view = new TodoView model: todoModel
+			if @user?.references?.TaskModels
+				@todos.each (todoModel) =>
+					todoModel.urlRoot = @user.references.TaskModels
+					view = new TodoView model: todoModel
+					@addSubView view, 'append', 'ul.todos'
+					return
+				view = new TodoView model: new Models.Todo(urlRoot: @user.references.TaskModels)
 				@addSubView view, 'append', 'ul.todos'
-				return
-			view = new TodoView model: new Models.Todo(urlRoot: @todos.url, userId: @user.id)
-			@addSubView view, 'append', 'ul.todos'
 			@
+
+		setUser: (user) ->
+			if user
+				@user = user
+				@listenTo @user, 'change:headers', =>
+					@renderUser()
+					return
+			return
 
 	class ToolbarView extends BaseView
 		className: 'navbar navbar-fixed-top'
@@ -207,6 +211,9 @@ define [
 
 		initialize: (options) ->
 			@listenTo @model, 'change:completed', @render
+			# @listenTo @model, 'change:id', =>
+			# 	console.log @model.toJSON()
+			# 	return
 			super options
 
 		render: ->

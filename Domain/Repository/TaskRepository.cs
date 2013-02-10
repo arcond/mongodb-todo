@@ -15,21 +15,39 @@ namespace Domain.Repository
 
 		public IQueryable<Task> GetAll(ObjectId userId)
 		{
-			var query = Query.EQ("_id", userId);
-			var user = GetCollection().FindOne(query);
-			return user.Tasks.AsQueryable();
+			var query = Query.EQ("UserId", userId);
+			var tasks = GetCollection().Find(query);
+			return tasks.AsQueryable();
 		}
 
 		public Task Get(ObjectId id)
 		{
-			var query = Query.EQ("tasks._id", id);
-			var task = GetCollection().FindOne(query).Tasks.FirstOrDefault(x => x.Id.Equals(id));
+			var query = Query.EQ("_id", id);
+			var task = GetCollection().FindOne(query);
 			return task;
 		}
 
-		private MongoCollection<User> GetCollection()
+		public Task Add(Task task)
 		{
-			return _context.Database.GetCollection<User>("users");
+			GetCollection().Insert(task);
+			return task;
+		}
+
+		public Task Update(Task task)
+		{
+			GetCollection().Save(task);
+			return task;
+		}
+
+		public void Delete(ObjectId id)
+		{
+			var query = Query.EQ("_id", id);
+			GetCollection().Remove(query);
+		}
+
+		private MongoCollection<Task> GetCollection()
+		{
+			return _context.Database.GetCollection<Task>("todos");
 		}
 	}
 }

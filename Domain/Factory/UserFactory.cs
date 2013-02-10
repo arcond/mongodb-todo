@@ -10,7 +10,7 @@ namespace Domain.Factory
 			return new User {
 				Id = ObjectId.Empty,
 				Name = name,
-				Tasks = new List<Task>()
+				Tasks = new List<ObjectId>()
 			};
 		}
 	}

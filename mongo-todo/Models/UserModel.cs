@@ -8,7 +8,5 @@ namespace mongo_todo.Models
 
 		[Required]
 		public string Name { get; set; }
-
-		public string TasksUrl { get; set; }
 	}
 }

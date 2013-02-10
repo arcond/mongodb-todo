@@ -1,16 +1,18 @@
 ﻿using Domain.Model;
 using MongoDB.Bson;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Domain
 {
 	public class User :MongoDbModel
 	{
-		//internal BsonArray tasks = new BsonArray();
+		public User()
+		{
+			Tasks = new List<ObjectId>();
+		}
 
 		public string Name { get; internal set; }
-		public IList<Task> Tasks { get; internal set; }
+		internal IList<ObjectId> Tasks { get; set; }
 
 		public void SetName(string name)
 		{
@@ -19,22 +21,12 @@ namespace Domain
 
 		public void AddTask(Task task)
 		{
-			Tasks.Add(task);
-			//tasks.Add(BsonValue.Create(tasks));
-		}
-
-		public void UpdateTask(ObjectId taskId, string description, bool isComplete)
-		{
-			var existing = Tasks.FirstOrDefault(x => x.Id.Equals(taskId));
-			existing.SetDescription(description);
-			if (existing.Completed != isComplete) existing.Toggle();
-			//tasks[tasks.IndexOf(BsonValue.Create(existing))] = BsonValue.Create(existing);
+			if (!Tasks.Contains(task.Id)) Tasks.Add(task.Id);
 		}
 
 		public void RemoveTask(Task task)
 		{
-			Tasks.Remove(task);
-			//tasks.Remove(BsonValue.Create(task));
+			if (Tasks.Contains(task.Id)) Tasks.Remove(task.Id);
 		}
 	}
 }

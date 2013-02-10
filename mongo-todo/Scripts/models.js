@@ -9,9 +9,36 @@
 
       __extends(BaseModel, _super);
 
-      function BaseModel() {
-        return BaseModel.__super__.constructor.apply(this, arguments);
+      function BaseModel(options) {
+        this.references = {};
+        BaseModel.__super__.constructor.call(this, options);
+        return;
       }
+
+      BaseModel.prototype.fetch = function(options) {
+        var xhr,
+          _this = this;
+        xhr = BaseModel.__super__.fetch.call(this, options);
+        xhr.done(function(data) {
+          var linkHeader, links;
+          linkHeader = xhr.getResponseHeader('Link');
+          if (linkHeader) {
+            links = linkHeader.split(',');
+            _this.references = _this.references;
+            _.each(links, function(link) {
+              var parts, rel, relParts, url;
+              parts = link.split(';');
+              url = parts[0].replace('<', '');
+              url = url.replace('>', '');
+              relParts = parts[1].split('=');
+              rel = relParts[1].replace('[]', 's');
+              _this.references[rel] = url;
+            });
+          }
+          _this.trigger('change:headers');
+        });
+        return xhr;
+      };
 
       return BaseModel;
 
@@ -48,21 +75,18 @@
         return Todo.__super__.constructor.apply(this, arguments);
       }
 
-      Todo.prototype.urlRoot = function() {
-        return "/api/users/" + (this.get('userId')) + "/tasks";
-      };
-
       Todo.prototype.defaults = {
         description: '',
-        completed: false,
-        userId: ''
+        completed: false
       };
 
       Todo.prototype.initialize = function(options) {
-        if (options != null ? options.userId : void 0) {
-          this.set('userId', options.userId);
+        if (options != null ? options.urlRoot : void 0) {
+          this.urlRoot = function() {
+            return options.urlRoot;
+          };
         }
-        return Todo.__super__.initialize.call(this);
+        return Todo.__super__.initialize.call(this, options);
       };
 
       Todo.prototype.updateDescription = function(newDescription) {

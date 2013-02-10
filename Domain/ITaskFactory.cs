@@ -1,13 +1,9 @@
-﻿using Domain.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using MongoDB.Bson;
 
 namespace Domain
 {
 	public interface ITaskFactory
 	{
-		Task CreateTask(string description);
+		Task CreateTask(ObjectId userId, string description);
 	}
 }
