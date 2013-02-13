@@ -1,5 +1,6 @@
 ﻿using Domain.Model;
 using MongoDB.Bson;
+using System;
 
 namespace Domain
 {
@@ -11,11 +12,13 @@ namespace Domain
 
 		public void SetDescription(string description)
 		{
+			LastModified = BsonDateTime.Create(DateTime.UtcNow);
 			Description = description;
 		}
 
 		public void Toggle()
 		{
+			LastModified = BsonDateTime.Create(DateTime.UtcNow);
 			Completed = !Completed;
 		}
 	}

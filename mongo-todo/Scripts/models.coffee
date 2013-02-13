@@ -14,6 +14,7 @@ define [
 				if xhr.status is 201
 					locationHeader = xhr.getResponseHeader 'Location'
 					if locationHeader
+						#([\dA-z]+)
 						idx = locationHeader.lastIndexOf '/'
 						idx += 1
 						if locationHeader.length <= idx
@@ -31,6 +32,10 @@ define [
 					_.each links, (link) =>
 						parts = link.split ';'
 
+						#<(https?:\/\/)?([\dA-z\.-]+)(:[\d]+)?(\.([A-z\.]{2,6}))?([/\w#\.-]*)*\/?>; ?rel=[\w\.-\[\]]+; ?type="[\w\.-\/]+"
+						#(https?:\/\/)?([\dA-z\.-]+)(:[\d]+)?(\.([A-z\.]{2,6}))?([/\w#\.-]*)*\/?
+						#rel=[\w\.-\[\]]+
+						#type="[\w\.-\/]+"
 						url = parts[0].replace '<', ''
 						url = url.replace '>', ''
 

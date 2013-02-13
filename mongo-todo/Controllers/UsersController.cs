@@ -3,6 +3,8 @@ using Domain;
 using mongo_todo.Models;
 using MongoDB.Bson;
 using System;
+using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -18,6 +20,48 @@ namespace mongo_todo.Controllers
 		{
 			_userRepository = userRepository;
 			_userFactory = userFactory;
+		}
+
+		public HttpResponseMessage Head()
+		{
+			HttpResponseMessage response = null;
+			if (this.Request.Headers.IfModifiedSince.HasValue) {
+				try {
+					var users = _userRepository.GetAll().Where(x => x.LastModified.AsDateTime > this.Request.Headers.IfModifiedSince);
+					if (users != null && users.Any()) {
+						users.OrderBy(x => x.LastModified);
+						response = this.Request.CreateResponse(HttpStatusCode.OK);
+						response.Headers.Add("Last-Modified", users.First().LastModified.AsDateTime.ToString());
+					} else response = this.Request.CreateResponse(HttpStatusCode.NotModified);
+				} catch (Exception ex) {
+					return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+				}
+			}
+
+			response.Headers.Add("Type", typeof(UserModel[]).Name);
+			response.Headers.Add("Link", GetTaskHeaderLink(this.Request, response));
+			return response;
+		}
+
+		public HttpResponseMessage Head(string id)
+		{
+			HttpResponseMessage response = null;
+			if (this.Request.Headers.IfModifiedSince.HasValue) {
+				try {
+					var user = _userRepository.Get(ObjectId.Parse(id));
+					if (user.LastModified.AsDateTime > this.Request.Headers.IfModifiedSince.Value) {
+						response = this.Request.CreateResponse(HttpStatusCode.OK);
+						response.Headers.Add("Last-Modified", user.LastModified.AsDateTime.ToString());
+					}
+				} catch (Exception ex) {
+					return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+				}
+			}
+
+			if (response == null) response = this.Request.CreateResponse(HttpStatusCode.NotModified);
+			response.Headers.Add("Type", typeof(UserModel).Name);
+			response.Headers.Add("Link", GetTaskHeaderLink(this.Request, response));
+			return response;
 		}
 
 		public HttpResponseMessage Get()
@@ -86,6 +130,30 @@ namespace mongo_todo.Controllers
 			return response;
 		}
 
+		public HttpResponseMessage Patch(string id, ExpandoObject user)
+		{
+			try {
+				string newName = null;
+				var kvp = (IDictionary<string, object>)user;
+				if (kvp.ContainsKey("Name")) newName = ((dynamic)user).Name;
+
+				if (newName != null) {
+					var savedUser = _userRepository.Get(ObjectId.Parse(id));
+					savedUser.SetName(newName);
+					_userRepository.Update(savedUser); 
+				}
+			} catch (NullReferenceException ex) {
+				return this.Request.CreateResponse(HttpStatusCode.NotFound, ex.Message);
+			} catch (Exception ex) {
+				return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+			}
+
+			var response = this.Request.CreateResponse(HttpStatusCode.OK);
+			response.Headers.Add("Link", GetTaskHeaderLink(this.Request, response));
+			response.Headers.Add("Type", typeof(UserModel).Name);
+			return response;
+		}
+
 		public HttpResponseMessage Delete(UserModel user)
 		{
 			try {
@@ -98,7 +166,7 @@ namespace mongo_todo.Controllers
 
 			return this.Request.CreateResponse(HttpStatusCode.OK);
 		}
-
+		
 		private string GetTaskHeaderLink(HttpRequestMessage request, HttpResponseMessage response)
 		{
 			return GetTaskHeaderLink(request, response, string.Empty);

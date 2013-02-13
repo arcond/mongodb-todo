@@ -76,10 +76,9 @@ namespace mongo_todo.Controllers
 			return response;
 		}
 
-		public HttpResponseMessage Post(TaskModel task)
+		public HttpResponseMessage Post(string userId, TaskModel task)
 		{
 			var routeData = this.Request.GetRouteData();
-			var userId = routeData.Values["userId"].ToString();
 			var todo = _taskFactory.CreateTask(ObjectId.Parse(userId), task.Description);
 
 			try {
@@ -100,12 +99,12 @@ namespace mongo_todo.Controllers
 			return response;
 		}
 
-		public HttpResponseMessage Delete(TaskModel task)
+		public HttpResponseMessage Delete(string userId, TaskModel task)
 		{
 			try {
 				var taskId = ObjectId.Parse(task.Id);
 				var todo = _taskRepository.Get(taskId);
-				var user = _userRepository.Get(ObjectId.Empty);
+				var user = _userRepository.Get(ObjectId.Parse(userId));
 				user.RemoveTask(todo);
 				_userRepository.Update(user);
 				_taskRepository.Delete(taskId);
