@@ -30,6 +30,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity">
+      <HintPath>..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration">
+      <HintPath>..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
     <Reference Include="MongoDB.Bson, Version=1.7.0.4714, Culture=neutral, PublicKeyToken=f686731cfb9cc103, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\mongocsharpdriver.1.7\lib\net35\MongoDB.Bson.dll</HintPath>
@@ -48,13 +57,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Aggregates\IUserDependency.cs" />
+    <Compile Include="Aggregates\UserDependency.cs" />
     <Compile Include="Data\Context.cs" />
     <Compile Include="Data\Initializer.cs" />
     <Compile Include="Factory\TaskFactory.cs" />
     <Compile Include="Factory\UserFactory.cs" />
     <Compile Include="IContext.cs" />
-    <Compile Include="ITaskFactory.cs" />
-    <Compile Include="ITaskRepository.cs" />
+    <Compile Include="Aggregates\ITaskFactory.cs" />
+    <Compile Include="Aggregates\ITaskRepository.cs" />
     <Compile Include="IUserFactory.cs" />
     <Compile Include="IUserRepository.cs" />
     <Compile Include="Model\MongoDbModel.cs" />
@@ -63,6 +74,7 @@
     <Compile Include="Task.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DependencyExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

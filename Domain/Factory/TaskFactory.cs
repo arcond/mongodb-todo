@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using Domain.Aggregates;
+using MongoDB.Bson;
 
 namespace Domain.Factory
 {

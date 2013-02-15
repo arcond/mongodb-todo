@@ -1,8 +1,12 @@
 using Domain;
+using Domain.Aggregates;
 using Domain.Data;
 using Domain.Factory;
 using Domain.Repository;
+using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
+using System;
+using System.Web;
 using System.Web.Http;
 using Unity.Mvc3;
 
@@ -15,6 +19,10 @@ namespace mongo_todo
 			var container = BuildUnityContainer();
 
 			GlobalConfiguration.Configuration.DependencyResolver = new WebApiUnityDependencyResolver(new UnityDependencyResolver(container));
+
+			ServiceLocator.SetLocatorProvider(() => {
+				return new UnityServiceLocator((IUnityContainer)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(IUnityContainer)));
+			});
 		}
 
 		private static IUnityContainer BuildUnityContainer()
@@ -23,13 +31,41 @@ namespace mongo_todo
 
 			// register all your components with the container here
 			// e.g. container.RegisterType<ITestService, TestService>();
-			container.RegisterType<IUserRepository, UserRepository>();
-			container.RegisterType<ITaskRepository, TaskRepository>();
-			container.RegisterType<IUserFactory, UserFactory>();
-			container.RegisterType<ITaskFactory, TaskFactory>();
-			container.RegisterType<IContext, Context>();
+			container
+				.RegisterType<IUserRepository, UserRepository>()
+				.RegisterType<ITaskRepository, TaskRepository>()
+				.RegisterType<IUserFactory, UserFactory>()
+				.RegisterType<ITaskFactory, TaskFactory>()
+				.RegisterType<IContext, Context>()
+				.RegisterType<IUserDependency, UserDependency>()
+			;
+
+			//var test = container.Resolve<UserDependency>();
+			//var test2 = test.TaskFactory;
+			//container.RegisterInstance<UserDependency>(container.Resolve<UserDependency>());
 
 			return container;
+		}
+	}
+
+	public class PerHttpRequestLifetime :LifetimeManager
+	{
+		private readonly Guid _key = Guid.NewGuid();
+
+		public override object GetValue()
+		{
+			return HttpContext.Current.Items[_key];
+		}
+
+		public override void SetValue(object newValue)
+		{
+			HttpContext.Current.Items[_key] = newValue;
+		}
+
+		public override void RemoveValue()
+		{
+			var obj = GetValue();
+			HttpContext.Current.Items.Remove(obj);
 		}
 	}
 

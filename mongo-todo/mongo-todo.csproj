@@ -154,6 +154,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="DynamicExtension.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -240,7 +241,11 @@
     <None Include="BundleTransformer.Configuration.xsd">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="Scripts\backbone.rest.coffee" />
     <None Include="Scripts\lib\jquery-1.9.0.intellisense.js" />
+    <Content Include="Scripts\backbone.rest.js">
+      <DependentUpon>backbone.rest.coffee</DependentUpon>
+    </Content>
     <Content Include="Scripts\lib\backbone.js" />
     <Content Include="Scripts\lib\backbone.min.js" />
     <Content Include="Scripts\lib\jquery-1.9.0.js" />

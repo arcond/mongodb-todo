@@ -8,6 +8,10 @@ require.config
 				'underscore'
 			]
 			exports: 'Backbone'
+		'backbone.rest':
+			deps: [
+				'backbone'
+			]
 	paths:
 		jquery: 'lib/jquery.min'
 		underscore: 'lib/underscore'
@@ -15,6 +19,7 @@ require.config
 	urlArgs: 'bust=v2' # This can be used to invalidate the cache
 require [
 	'routers'
+	'backbone.rest'
 ], (Routers) ->
 	new Routers.Router
 	Backbone.history.start()

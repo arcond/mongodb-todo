@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using System.Linq;
 
-namespace Domain
+namespace Domain.Aggregates
 {
 	public interface ITaskRepository
 	{

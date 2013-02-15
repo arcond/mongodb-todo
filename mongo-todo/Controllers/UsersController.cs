@@ -3,7 +3,6 @@ using Domain;
 using mongo_todo.Models;
 using MongoDB.Bson;
 using System;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Net;
@@ -134,8 +133,7 @@ namespace mongo_todo.Controllers
 		{
 			try {
 				string newName = null;
-				var kvp = (IDictionary<string, object>)user;
-				if (kvp.ContainsKey("Name")) newName = ((dynamic)user).Name;
+				if (user.HasProperty("Name")) newName = ((dynamic)user).Name;
 
 				if (newName != null) {
 					var savedUser = _userRepository.Get(ObjectId.Parse(id));

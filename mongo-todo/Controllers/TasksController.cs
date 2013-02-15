@@ -11,14 +11,10 @@ namespace mongo_todo.Controllers
 {
 	public class TasksController : ApiController
 	{
-		private readonly ITaskRepository _taskRepository;
 		private readonly IUserRepository _userRepository;
-		private readonly ITaskFactory _taskFactory;
-		public TasksController(ITaskRepository taskRepository, IUserRepository userRepository, ITaskFactory taskFactory)
+		public TasksController(IUserRepository userRepository)
 		{
-			_taskRepository = taskRepository;
 			_userRepository = userRepository;
-			_taskFactory = taskFactory;
 		}
 
 		public HttpResponseMessage GetAll(string userId)
@@ -26,7 +22,7 @@ namespace mongo_todo.Controllers
 			TaskModel[] tasks = null;
 
 			try {
-				tasks = Mapper.Map<TaskModel[]>(_taskRepository.GetAll(ObjectId.Parse(userId)));
+				tasks = Mapper.Map<TaskModel[]>(_userRepository.Get(ObjectId.Parse(userId)).GetTasks());
 			} catch (NullReferenceException ex) {
 				return this.Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
 			} catch (Exception ex) {
@@ -44,7 +40,7 @@ namespace mongo_todo.Controllers
 			TaskModel task = null;
 
 			try {
-				task = Mapper.Map<TaskModel>(_taskRepository.Get(ObjectId.Parse(id)));
+				task = Mapper.Map<TaskModel>(_userRepository.Get(ObjectId.Parse(userId)).GetTask(ObjectId.Parse(id)));
 			} catch (NullReferenceException ex) {
 				return this.Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
 			} catch (Exception ex) {
@@ -56,15 +52,12 @@ namespace mongo_todo.Controllers
 			return response;
 		}
 
-		public HttpResponseMessage Put(TaskModel task)
+		public HttpResponseMessage Put(string userId, TaskModel task)
 		{
-			Task todo = null;
-
 			try {
-				todo = _taskRepository.Get(ObjectId.Parse(task.Id));
-				todo.SetDescription(task.Description);
-				if (task.Completed != todo.Completed) todo.Toggle();
-				_taskRepository.Update(todo);
+				var user = _userRepository.Get(ObjectId.Parse(userId));
+				user.UpdateTask(ObjectId.Parse(task.Id), task.Description, task.Completed);
+				_userRepository.Update(user);
 			} catch (NullReferenceException ex) {
 				return this.Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
 			} catch (Exception ex) {
@@ -78,15 +71,12 @@ namespace mongo_todo.Controllers
 
 		public HttpResponseMessage Post(string userId, TaskModel task)
 		{
-			var routeData = this.Request.GetRouteData();
-			var todo = _taskFactory.CreateTask(ObjectId.Parse(userId), task.Description);
+			Task todo = null;
 
 			try {
-				_taskRepository.Add(todo);
-
 				var user = _userRepository.Get(ObjectId.Parse(userId));
-				user.AddTask(todo);
-				user = _userRepository.Update(user);
+				todo = user.AddTask(task.Description);
+				_userRepository.Update(user);
 			} catch (NullReferenceException ex) {
 				return this.Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
 			} catch (Exception ex) {
@@ -103,11 +93,9 @@ namespace mongo_todo.Controllers
 		{
 			try {
 				var taskId = ObjectId.Parse(task.Id);
-				var todo = _taskRepository.Get(taskId);
 				var user = _userRepository.Get(ObjectId.Parse(userId));
-				user.RemoveTask(todo);
+				user.RemoveTask(taskId);
 				_userRepository.Update(user);
-				_taskRepository.Delete(taskId);
 			} catch (NullReferenceException ex) {
 				return this.Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
 			} catch (Exception ex) {

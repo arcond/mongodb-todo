@@ -9,6 +9,9 @@
       'backbone': {
         deps: ['jquery', 'underscore'],
         exports: 'Backbone'
+      },
+      'backbone.rest': {
+        deps: ['backbone']
       }
     },
     paths: {
@@ -19,7 +22,7 @@
     urlArgs: 'bust=v2'
   });
 
-  require(['routers'], function(Routers) {
+  require(['routers', 'backbone.rest'], function(Routers) {
     new Routers.Router;
     Backbone.history.start();
   });

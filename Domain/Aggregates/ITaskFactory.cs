@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 
-namespace Domain
+namespace Domain.Aggregates
 {
 	public interface ITaskFactory
 	{
