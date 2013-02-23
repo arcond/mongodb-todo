@@ -19,23 +19,6 @@
         var xhr,
           _this = this;
         xhr = BaseModel.__super__.sync.call(this, method, model, options);
-        xhr.always(function(data) {
-          var idx, locationHeader, newId;
-          if (xhr.status === 201) {
-            locationHeader = xhr.getResponseHeader('Location');
-            if (locationHeader) {
-              idx = locationHeader.lastIndexOf('/');
-              idx += 1;
-              if (locationHeader.length <= idx) {
-                locationHeader = locationHeader.substring(0, locationHeader.length - 2);
-                idx = locationHeader.lastIndexOf('/');
-                idx += 1;
-              }
-              newId = locationHeader.substring(idx);
-              _this.set('id', newId);
-            }
-          }
-        });
         xhr.done(function(data) {
           var linkHeader, links;
           linkHeader = xhr.getResponseHeader('Link');

@@ -10,20 +10,6 @@ define [
 
 		sync: (method, model, options) ->
 			xhr = super method, model, options
-			xhr.always (data) =>
-				if xhr.status is 201
-					locationHeader = xhr.getResponseHeader 'Location'
-					if locationHeader
-						#([\dA-z]+)
-						idx = locationHeader.lastIndexOf '/'
-						idx += 1
-						if locationHeader.length <= idx
-							locationHeader = locationHeader.substring 0, locationHeader.length - 2
-							idx = locationHeader.lastIndexOf '/'
-							idx += 1
-						newId = locationHeader.substring idx
-						@set 'id', newId
-				return
 			xhr.done (data) =>
 				linkHeader = xhr.getResponseHeader 'Link'
 				if linkHeader
