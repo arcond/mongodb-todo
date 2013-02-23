@@ -10,35 +10,9 @@
       __extends(BaseModel, _super);
 
       function BaseModel(options) {
-        this.references = {};
         BaseModel.__super__.constructor.call(this, options);
         return;
       }
-
-      BaseModel.prototype.sync = function(method, model, options) {
-        var xhr,
-          _this = this;
-        xhr = BaseModel.__super__.sync.call(this, method, model, options);
-        xhr.done(function(data) {
-          var linkHeader, links;
-          linkHeader = xhr.getResponseHeader('Link');
-          if (linkHeader) {
-            links = linkHeader.split(',');
-            _this.references = _this.references;
-            _.each(links, function(link) {
-              var parts, rel, relParts, url;
-              parts = link.split(';');
-              url = parts[0].replace('<', '');
-              url = url.replace('>', '');
-              relParts = parts[1].split('=');
-              rel = relParts[1].replace('[]', 's');
-              _this.references[rel] = url;
-            });
-            _this.trigger('change:headers');
-          }
-        });
-        return xhr;
-      };
 
       return BaseModel;
 

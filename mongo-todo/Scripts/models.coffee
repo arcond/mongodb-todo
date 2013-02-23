@@ -4,35 +4,8 @@ define [
 ], (_, Backbone) ->
 	class BaseModel extends Backbone.Model
 		constructor: (options) ->
-			@references = {}
 			super options
 			return
-
-		sync: (method, model, options) ->
-			xhr = super method, model, options
-			xhr.done (data) =>
-				linkHeader = xhr.getResponseHeader 'Link'
-				if linkHeader
-					links = linkHeader.split ','
-					@references = @references
-					_.each links, (link) =>
-						parts = link.split ';'
-
-						#<(https?:\/\/)?([\dA-z\.-]+)(:[\d]+)?(\.([A-z\.]{2,6}))?([/\w#\.-]*)*\/?>; ?rel=[\w\.-\[\]]+; ?type="[\w\.-\/]+"
-						#(https?:\/\/)?([\dA-z\.-]+)(:[\d]+)?(\.([A-z\.]{2,6}))?([/\w#\.-]*)*\/?
-						#rel=[\w\.-\[\]]+
-						#type="[\w\.-\/]+"
-						url = parts[0].replace '<', ''
-						url = url.replace '>', ''
-
-						relParts = parts[1].split '='
-						rel = relParts[1].replace '[]', 's'
-
-						@references[rel] = url
-						return
-					@trigger 'change:headers'
-				return
-			xhr
 
 	class User extends BaseModel
 		urlRoot: '/api/users'
