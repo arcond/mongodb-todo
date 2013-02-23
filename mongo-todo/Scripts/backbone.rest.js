@@ -17,14 +17,8 @@
     type = methodMap[method];
     xhr = bacboneSync(method, model, options);
     xhr.always(function(data) {
-      var locationHeader, matches, regex;
-      regex = /([\dA-z]+)/g;
-      console.log(_.result(model, 'url'));
-      matches = _.result(model, 'url').match(regex);
-      console.log(matches);
-      if (matches != null ? matches.length : void 0) {
-        console.log(matches[matches.length - 1]);
-      }
+      var hasLinks, linkHeader, links, locationHeader, matches, regex, relRegex, typeRegex, urlRegex,
+        _this = this;
       if (model instanceof Backbone.Model) {
         if (type === 'POST' && xhr.status === 201) {
           locationHeader = xhr.getResponseHeader('Location');
@@ -34,6 +28,30 @@
             if (matches != null ? matches.length : void 0) {
               model.set('id', matches[matches.length - 1]);
             }
+          }
+        }
+      }
+      if (xhr.status < 400) {
+        linkHeader = xhr.getResponseHeader('Link');
+        if (linkHeader) {
+          regex = /<(https?:\/\/)?([\dA-z\.-]+)(:[\d]+)?(\.([A-z\.]{2,6}))?([/\w#\.-]*)*\/?>; ?rel=[\w\.-\[\]]+; ?(type="[\w\.-\/]+")?/g;
+          hasLinks = regex.test(linkHeader);
+          if (hasLinks) {
+            if (!model.references) {
+              model.references = {};
+            }
+            urlRegex = /(https?:\/\/)?([\dA-z\.-]+)(:[\d]+)?(\.([A-z\.]{2,6}))?([/\w#\.-]*)*\/?/;
+            relRegex = /[\w\.-\[\]]+/;
+            typeRegex = /'?"?[\w\.-\/]+"?'?/;
+            links = linkHeader.split(',');
+            _.each(links, function(link) {
+              var parts, rel, url;
+              parts = link.split(';');
+              url = parts[0].match(urlRegex);
+              rel = parts[1].match(relRegex);
+              model.references[rel[0].replace('rel=', '').replace('[]', 's')] = url[0];
+            });
+            model.trigger('change:headers');
           }
         }
       }
