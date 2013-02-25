@@ -89,12 +89,12 @@ namespace mongo_todo.Controllers
 			return response;
 		}
 
-		public HttpResponseMessage Delete(string userId, TaskModel task)
+		public HttpResponseMessage Delete(string userId, string id)
 		{
 			try {
-				var taskId = ObjectId.Parse(task.Id);
+				var todoId = ObjectId.Parse(id);
 				var user = _userRepository.Get(ObjectId.Parse(userId));
-				user.RemoveTask(taskId);
+				user.RemoveTask(todoId);
 				_userRepository.Update(user);
 			} catch (NullReferenceException ex) {
 				return this.Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
