@@ -51,7 +51,7 @@ define [
 			@todos = new Collections.Todos
 			if @userId then @setUser new Models.User id: @userId else @setUser new Models.User
 			@toolbarView = new ToolbarView collection: @users
-			@userView = new UserView
+			@userView = new UserView model: @user
 			@todoListView = new TodoListView
 			@listenTo @users, 'reset', =>
 				@renderToolbar()
@@ -67,19 +67,24 @@ define [
 			@toolbarView.remove()
 			@toolbarView = new ToolbarView collection: @users
 			@listenTo @toolbarView, 'users:add', =>
-				@user = new Models.User
+				Backbone.history.navigate '#0', false
+				@toolbarView.setUser @userId
+				@setUser new Models.User
 				@renderUser()
 				return
 			@listenTo @toolbarView, 'users:select', (userModel) =>
-				@setUser userModel
-				@user.fetch()
-				Backbone.history.navigate "##{@user.id}", false
+				if userModel
+					@setUser userModel
+					@user.fetch()
+					Backbone.history.navigate "##{@user.id}", false
+				else
+					@toolbarView.trigger 'users:add'
 				return
 			@listenTo @toolbarView, 'save-all', =>
 				@todos.save() if @todos
 				return
 			@addSubView @toolbarView, 'html'
-			@user.fetch() if @userId
+			@user.fetch() if @userId and @userId isnt 0 and @userId isnt '0'
 			@
 
 		renderUser: ->
@@ -88,6 +93,7 @@ define [
 			@userView = new UserView model: @user
 			@listenTo @userView, 'rendered', =>
 				if @user?.references?.TaskModels
+					@todos = undefined
 					@todos = new Collections.Todos url: @user.references.TaskModels
 					@listenTo @todos, 'reset', @renderTodos
 					@todos.fetch()
@@ -123,10 +129,18 @@ define [
 
 		setUser: (user) ->
 			if user
+				@user = undefined
 				@user = user
 				@listenTo @user, 'change:headers', =>
 					@renderUser()
 					return
+				unless user.id
+					@listenTo @user, 'change:id', =>
+						@users.add @user
+						@userId = @user.id
+						Backbone.history.navigate "##{@userId}", false
+						@toolbarView.setUser @userId
+						return
 			return
 
 	class ToolbarView extends BaseView

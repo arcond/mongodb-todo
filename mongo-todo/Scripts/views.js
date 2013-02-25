@@ -98,7 +98,9 @@
         this.toolbarView = new ToolbarView({
           collection: this.users
         });
-        this.userView = new UserView;
+        this.userView = new UserView({
+          model: this.user
+        });
         this.todoListView = new TodoListView;
         this.listenTo(this.users, 'reset', function() {
           _this.renderToolbar();
@@ -119,13 +121,19 @@
           collection: this.users
         });
         this.listenTo(this.toolbarView, 'users:add', function() {
-          _this.user = new Models.User;
+          Backbone.history.navigate('#0', false);
+          _this.toolbarView.setUser(_this.userId);
+          _this.setUser(new Models.User);
           _this.renderUser();
         });
         this.listenTo(this.toolbarView, 'users:select', function(userModel) {
-          _this.setUser(userModel);
-          _this.user.fetch();
-          Backbone.history.navigate("#" + _this.user.id, false);
+          if (userModel) {
+            _this.setUser(userModel);
+            _this.user.fetch();
+            Backbone.history.navigate("#" + _this.user.id, false);
+          } else {
+            _this.toolbarView.trigger('users:add');
+          }
         });
         this.listenTo(this.toolbarView, 'save-all', function() {
           if (_this.todos) {
@@ -133,7 +141,7 @@
           }
         });
         this.addSubView(this.toolbarView, 'html');
-        if (this.userId) {
+        if (this.userId && this.userId !== 0 && this.userId !== '0') {
           this.user.fetch();
         }
         return this;
@@ -149,6 +157,7 @@
         this.listenTo(this.userView, 'rendered', function() {
           var _ref, _ref1;
           if ((_ref = _this.user) != null ? (_ref1 = _ref.references) != null ? _ref1.TaskModels : void 0 : void 0) {
+            _this.todos = void 0;
             _this.todos = new Collections.Todos({
               url: _this.user.references.TaskModels
             });
@@ -206,10 +215,19 @@
       MainView.prototype.setUser = function(user) {
         var _this = this;
         if (user) {
+          this.user = void 0;
           this.user = user;
           this.listenTo(this.user, 'change:headers', function() {
             _this.renderUser();
           });
+          if (!user.id) {
+            this.listenTo(this.user, 'change:id', function() {
+              _this.users.add(_this.user);
+              _this.userId = _this.user.id;
+              Backbone.history.navigate("#" + _this.userId, false);
+              _this.toolbarView.setUser(_this.userId);
+            });
+          }
         }
       };
 
