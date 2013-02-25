@@ -220,7 +220,6 @@ define [
 		initialize: (options) ->
 			@listenTo @model, 'change:completed', @render
 			@listenTo @model, 'change:id', @render
-			@listenTo @model, 'destroy', @remove
 			super options
 
 		render: ->

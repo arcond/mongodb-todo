@@ -376,7 +376,6 @@
       TodoView.prototype.initialize = function(options) {
         this.listenTo(this.model, 'change:completed', this.render);
         this.listenTo(this.model, 'change:id', this.render);
-        this.listenTo(this.model, 'destroy', this.remove);
         return TodoView.__super__.initialize.call(this, options);
       };
 
