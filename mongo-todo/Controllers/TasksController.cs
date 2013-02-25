@@ -53,7 +53,7 @@ namespace mongo_todo.Controllers
 			return response;
 		}
 
-		public HttpResponseMessage Put(string userId, TaskModel task)
+		public HttpResponseMessage Put(string userId, string id, TaskModel task)
 		{
 			try {
 				var user = _userRepository.Get(ObjectId.Parse(userId));
