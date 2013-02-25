@@ -4,9 +4,11 @@ define [
 	'models'
 ], (_, Backbone, Models) ->
 	class BaseCollection extends Backbone.Collection
-		save: ->
-			_.invoke @models, 'save'
-			return
+		save: (options) ->
+			@update @models, options
+			method = if options?.force then 'update' else 'patch'
+			xhr = @sync method, @, options
+			xhr
 
 	class Users extends BaseCollection
 		model: Models.User

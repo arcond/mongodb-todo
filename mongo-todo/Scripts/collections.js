@@ -13,8 +13,12 @@
         return BaseCollection.__super__.constructor.apply(this, arguments);
       }
 
-      BaseCollection.prototype.save = function() {
-        _.invoke(this.models, 'save');
+      BaseCollection.prototype.save = function(options) {
+        var method, xhr;
+        this.update(this.models, options);
+        method = (options != null ? options.force : void 0) ? 'update' : 'patch';
+        xhr = this.sync(method, this, options);
+        return xhr;
       };
 
       return BaseCollection;
