@@ -152,10 +152,10 @@ namespace mongo_todo.Controllers
 			return response;
 		}
 
-		public HttpResponseMessage Delete(UserModel user)
+		public HttpResponseMessage Delete(string id)
 		{
 			try {
-				_userRepository.Delete(ObjectId.Parse(user.Id));
+				_userRepository.Delete(ObjectId.Parse(id));
 			} catch (NullReferenceException ex) {
 				return this.Request.CreateResponse(HttpStatusCode.NotFound, ex.Message);
 			} catch (Exception ex) {
