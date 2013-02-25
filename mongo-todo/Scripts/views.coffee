@@ -76,8 +76,7 @@ define [
 				Backbone.history.navigate "##{@user.id}", false
 				return
 			@listenTo @toolbarView, 'save-all', =>
-				@user.save()
-				@todos.save() if @todos
+				@todos.sync 'patch', @todos if @todos
 				return
 			@addSubView @toolbarView, 'html'
 			@user.fetch() if @userId

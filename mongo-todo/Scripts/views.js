@@ -128,9 +128,8 @@
           Backbone.history.navigate("#" + _this.user.id, false);
         });
         this.listenTo(this.toolbarView, 'save-all', function() {
-          _this.user.save();
           if (_this.todos) {
-            _this.todos.save();
+            _this.todos.sync('patch', _this.todos);
           }
         });
         this.addSubView(this.toolbarView, 'html');
