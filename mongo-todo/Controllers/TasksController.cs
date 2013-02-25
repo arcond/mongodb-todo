@@ -69,6 +69,16 @@ namespace mongo_todo.Controllers
 			return response;
 		}
 
+		public HttpResponseMessage Put(string userId, TaskModel[] task)
+		{
+			return this.Request.CreateResponse(HttpStatusCode.Unused);
+		}
+
+		public HttpResponseMessage Patch(string userId, TaskModel[] task)
+		{
+			return this.Request.CreateResponse(HttpStatusCode.Unused);
+		}
+
 		public HttpResponseMessage Post(string userId, TaskModel task)
 		{
 			Task todo = null;
