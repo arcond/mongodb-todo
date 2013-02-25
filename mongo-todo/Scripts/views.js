@@ -129,7 +129,7 @@
         });
         this.listenTo(this.toolbarView, 'save-all', function() {
           if (_this.todos) {
-            _this.todos.sync('patch', _this.todos);
+            _this.todos.save();
           }
         });
         this.addSubView(this.toolbarView, 'html');
