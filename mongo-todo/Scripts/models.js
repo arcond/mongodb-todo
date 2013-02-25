@@ -28,8 +28,7 @@
       User.prototype.urlRoot = '/api/users';
 
       User.prototype.defaults = {
-        name: '',
-        tasksUrl: ''
+        name: ''
       };
 
       User.prototype.updateName = function(newName) {

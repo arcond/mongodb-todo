@@ -11,7 +11,6 @@ define [
 		urlRoot: '/api/users'
 		defaults:
 			name: ''
-			tasksUrl: ''
 
 		updateName: (newName) ->
 			@set
