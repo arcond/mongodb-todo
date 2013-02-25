@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   define(['jquery', 'underscore', 'backbone', 'models', 'collections'], function($, _, Backbone, Models, Collections) {
-    var BaseView, MainView, ParentView, TodoListView, TodoView, ToolbarView, UserView;
+    var BaseView, MainPage, Page, TodoListView, TodoView, ToolbarView, UserView;
     BaseView = (function(_super) {
 
       __extends(BaseView, _super);
@@ -22,27 +22,27 @@
       return BaseView;
 
     })(Backbone.View);
-    ParentView = (function(_super) {
+    Page = (function(_super) {
 
-      __extends(ParentView, _super);
+      __extends(Page, _super);
 
-      ParentView.prototype.subviews = [];
+      Page.prototype.subviews = [];
 
-      function ParentView(options) {
+      function Page(options) {
         this.subviews = [];
-        ParentView.__super__.constructor.call(this, options);
+        Page.__super__.constructor.call(this, options);
       }
 
-      ParentView.prototype.remove = function() {
+      Page.prototype.remove = function() {
         this.trigger('removed', this);
         this.removeSubViews();
         this.$el.fadeOut('fast', function() {
           $(this).remove();
         });
-        return ParentView.__super__.remove.call(this);
+        return Page.__super__.remove.call(this);
       };
 
-      ParentView.prototype.addSubView = function(view, insertMethod, targetSelector) {
+      Page.prototype.addSubView = function(view, insertMethod, targetSelector) {
         if (insertMethod == null) {
           insertMethod = 'append';
         }
@@ -59,29 +59,29 @@
         return this;
       };
 
-      ParentView.prototype.removeSubViews = function() {
+      Page.prototype.removeSubViews = function() {
         _.invoke(this.subviews, 'remove');
         this.subviews = [];
       };
 
-      ParentView._removeSubView = function(view) {
+      Page._removeSubView = function(view) {
         this.subviews = _.without(this.subviews, view);
       };
 
-      return ParentView;
+      return Page;
 
     })(BaseView);
-    MainView = (function(_super) {
+    MainPage = (function(_super) {
 
-      __extends(MainView, _super);
+      __extends(MainPage, _super);
 
-      function MainView() {
-        return MainView.__super__.constructor.apply(this, arguments);
+      function MainPage() {
+        return MainPage.__super__.constructor.apply(this, arguments);
       }
 
-      MainView.prototype.el = '#main-content';
+      MainPage.prototype.el = '#main-content';
 
-      MainView.prototype.initialize = function(options) {
+      MainPage.prototype.initialize = function(options) {
         var _this = this;
         if (options != null ? options.userId : void 0) {
           this.userId = options.userId;
@@ -105,16 +105,16 @@
         this.listenTo(this.users, 'reset', function() {
           _this.renderToolbar();
         });
-        return MainView.__super__.initialize.call(this, options);
+        return MainPage.__super__.initialize.call(this, options);
       };
 
-      MainView.prototype.render = function() {
-        MainView.__super__.render.call(this);
+      MainPage.prototype.render = function() {
+        MainPage.__super__.render.call(this);
         this.users.fetch();
         return this;
       };
 
-      MainView.prototype.renderToolbar = function() {
+      MainPage.prototype.renderToolbar = function() {
         var _this = this;
         this.stopListening(this.toolbarView);
         this.toolbarView.remove();
@@ -148,7 +148,7 @@
         return this;
       };
 
-      MainView.prototype.renderUser = function() {
+      MainPage.prototype.renderUser = function() {
         var _this = this;
         this.stopListening(this.userView);
         this.stopListening(this.todoListView);
@@ -172,7 +172,7 @@
         return this;
       };
 
-      MainView.prototype.renderTodos = function() {
+      MainPage.prototype.renderTodos = function() {
         this.stopListening(this.todoListView);
         this.todoListView.remove();
         this.todoListView = new TodoListView({
@@ -184,7 +184,7 @@
         return this;
       };
 
-      MainView.prototype.renderTodo = function() {
+      MainPage.prototype.renderTodo = function() {
         var _ref, _ref1,
           _this = this;
         if ((_ref = this.user) != null ? (_ref1 = _ref.references) != null ? _ref1.TaskModels : void 0 : void 0) {
@@ -201,7 +201,7 @@
         return this;
       };
 
-      MainView.prototype.renderNewTodo = function() {
+      MainPage.prototype.renderNewTodo = function() {
         var newTodo, view,
           _this = this;
         newTodo = new Models.Todo({
@@ -216,7 +216,7 @@
         return this.addSubView(view, 'append', 'ul.todos');
       };
 
-      MainView.prototype.setUser = function(user) {
+      MainPage.prototype.setUser = function(user) {
         var _this = this;
         if (user) {
           this.stopListening(this.user);
@@ -235,9 +235,9 @@
         }
       };
 
-      return MainView;
+      return MainPage;
 
-    })(ParentView);
+    })(Page);
     ToolbarView = (function(_super) {
       var _ref;
 
@@ -431,7 +431,7 @@
 
     })(BaseView);
     return {
-      MainView: MainView
+      MainPage: MainPage
     };
   });
 

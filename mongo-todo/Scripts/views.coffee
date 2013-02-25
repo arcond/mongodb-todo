@@ -11,7 +11,7 @@ define [
 			@trigger 'rendered'
 			@
 
-	class ParentView extends BaseView
+	class Page extends BaseView
 		subviews: []
 
 		constructor: (options) ->
@@ -42,7 +42,7 @@ define [
 			@subviews = _.without @subviews, view
 			return
 
-	class MainView extends ParentView
+	class MainPage extends Page
 		el: '#main-content'
 
 		initialize: (options) ->
@@ -262,5 +262,5 @@ define [
 			return
 
 	{
-		MainView: MainView
+		MainPage: MainPage
 	}

@@ -19,22 +19,22 @@
       };
 
       Router.prototype.initialize = function(options) {
-        this.masterView = new Views.MainView;
+        this.mainPage = new Views.MainPage;
         return Router.__super__.initialize.call(this, options);
       };
 
       Router.prototype.root = function() {
-        this.masterView.removeSubViews();
-        this.masterView = new Views.MainView;
-        this.masterView.render();
+        this.mainPage.removeSubViews();
+        this.mainPage = new Views.MainPage;
+        this.mainPage.render();
       };
 
       Router.prototype.tasks = function(userId) {
-        this.masterView.removeSubViews();
-        this.masterView = new Views.MainView({
+        this.mainPage.removeSubViews();
+        this.mainPage = new Views.MainPage({
           userId: userId
         });
-        this.masterView.render();
+        this.mainPage.render();
       };
 
       return Router;

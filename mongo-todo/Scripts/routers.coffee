@@ -12,19 +12,19 @@ define [
 			':userId': 'tasks'
 
 		initialize: (options) ->
-			@masterView = new Views.MainView
+			@mainPage = new Views.MainPage
 			super options		
 
 		root: ->
-			@masterView.removeSubViews()
-			@masterView = new Views.MainView
-			@masterView.render()
+			@mainPage.removeSubViews()
+			@mainPage = new Views.MainPage
+			@mainPage.render()
 			return
 
 		tasks: (userId) ->
-			@masterView.removeSubViews()
-			@masterView = new Views.MainView userId: userId
-			@masterView.render()
+			@mainPage.removeSubViews()
+			@mainPage = new Views.MainPage userId: userId
+			@mainPage.render()
 			return
 
 	{
