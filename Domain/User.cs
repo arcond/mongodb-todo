@@ -44,8 +44,8 @@ namespace Domain
 		{
 			var task = Dependency.TaskFactory.CreateTask(this.Id, description);
 			Dependency.TaskRepository.Add(task);
-			LastModified = BsonDateTime.Create(DateTime.UtcNow);
 			Tasks.Add(task.Id);
+			LastModified = BsonDateTime.Create(DateTime.UtcNow);
 
 			return task;
 		}
@@ -64,9 +64,38 @@ namespace Domain
 
 		public void RemoveTask(ObjectId id)
 		{
-			LastModified = BsonDateTime.Create(DateTime.UtcNow);
 			if (Tasks.Contains(id)) Tasks.Remove(id);
 			Dependency.TaskRepository.Delete(id);
+			LastModified = BsonDateTime.Create(DateTime.UtcNow);
+		}
+
+		public void SetTasks(Task[] todos)
+		{
+			if (todos == null || todos.Any(x => x.Id == null || x.Id.Equals(ObjectId.Empty)))
+				throw new ArgumentNullException("Cannot add new tasks with no or default ID, please use the AddTask method first.", "todos.Id");
+
+			if (!todos.Any(x => x.UserId.Equals(Id) || x.UserId.Equals(ObjectId.Empty)))
+				throw new ArgumentException("Cannot add tasks that belong to another user");
+
+			RemoveAllTasks();
+			AddTasks(todos);
+			LastModified = BsonDateTime.Create(DateTime.Now);
+		}
+
+		private void RemoveAllTasks()
+		{
+			foreach (var todoId in Tasks) {
+				Tasks.Remove(todoId);
+				Dependency.TaskRepository.Delete(todoId);
+			}
+		}
+
+		private void AddTasks(Task[] todos)
+		{
+			foreach (var todo in todos) {
+				Dependency.TaskRepository.Add(todo);
+				Tasks.Add(todo.Id);
+			}
 		}
 	}
 }
