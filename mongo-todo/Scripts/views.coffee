@@ -64,6 +64,7 @@ define [
 			@
 
 		renderToolbar: ->
+			@stopListening @toolbarView
 			@toolbarView.remove()
 			@toolbarView = new ToolbarView collection: @users
 			@listenTo @toolbarView, 'users:add', =>
@@ -88,6 +89,8 @@ define [
 			@
 
 		renderUser: ->
+			@stopListening @userView
+			@stopListening @todoListView
 			@userView.remove()
 			@todoListView.remove()
 			@userView = new UserView model: @user
@@ -102,6 +105,7 @@ define [
 			@
 
 		renderTodos: ->
+			@stopListening @todoListView
 			@todoListView.remove()
 			@todoListView = new TodoListView collection: @todos
 			@addSubView @todoListView
@@ -129,7 +133,7 @@ define [
 
 		setUser: (user) ->
 			if user
-				@user = undefined
+				@stopListening @user
 				@user = user
 				@listenTo @user, 'change:headers', =>
 					@renderUser()

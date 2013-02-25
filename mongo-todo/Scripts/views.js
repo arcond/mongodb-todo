@@ -116,6 +116,7 @@
 
       MainView.prototype.renderToolbar = function() {
         var _this = this;
+        this.stopListening(this.toolbarView);
         this.toolbarView.remove();
         this.toolbarView = new ToolbarView({
           collection: this.users
@@ -149,6 +150,8 @@
 
       MainView.prototype.renderUser = function() {
         var _this = this;
+        this.stopListening(this.userView);
+        this.stopListening(this.todoListView);
         this.userView.remove();
         this.todoListView.remove();
         this.userView = new UserView({
@@ -170,6 +173,7 @@
       };
 
       MainView.prototype.renderTodos = function() {
+        this.stopListening(this.todoListView);
         this.todoListView.remove();
         this.todoListView = new TodoListView({
           collection: this.todos
@@ -215,7 +219,7 @@
       MainView.prototype.setUser = function(user) {
         var _this = this;
         if (user) {
-          this.user = void 0;
+          this.stopListening(this.user);
           this.user = user;
           this.listenTo(this.user, 'change:headers', function() {
             _this.renderUser();
