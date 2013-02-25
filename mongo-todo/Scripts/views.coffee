@@ -215,10 +215,12 @@ define [
 			'click input[type=checkbox]': 'toggleComplete'
 			'keyup input[type=checkbox]': 'toggleComplete'
 			'click .add-task': 'addTask'
+			'click .remove-task': 'removeTask'
 
 		initialize: (options) ->
 			@listenTo @model, 'change:completed', @render
 			@listenTo @model, 'change:id', @render
+			@listenTo @model, 'destroy', @remove
 			super options
 
 		render: ->
@@ -232,6 +234,11 @@ define [
 		addTask: (ev) ->
 			ev.preventDefault() if ev?.preventDefault
 			@model.save()
+			return
+
+		removeTask: (ev) ->
+			ev.preventDefault() if ev?.preventDefault
+			@model.destroy()
 			return
 
 		toggleComplete: ->

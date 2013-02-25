@@ -369,12 +369,14 @@
         'keyup input.description': 'updateDescription',
         'click input[type=checkbox]': 'toggleComplete',
         'keyup input[type=checkbox]': 'toggleComplete',
-        'click .add-task': 'addTask'
+        'click .add-task': 'addTask',
+        'click .remove-task': 'removeTask'
       };
 
       TodoView.prototype.initialize = function(options) {
         this.listenTo(this.model, 'change:completed', this.render);
         this.listenTo(this.model, 'change:id', this.render);
+        this.listenTo(this.model, 'destroy', this.remove);
         return TodoView.__super__.initialize.call(this, options);
       };
 
@@ -392,6 +394,13 @@
           ev.preventDefault();
         }
         this.model.save();
+      };
+
+      TodoView.prototype.removeTask = function(ev) {
+        if (ev != null ? ev.preventDefault : void 0) {
+          ev.preventDefault();
+        }
+        this.model.destroy();
       };
 
       TodoView.prototype.toggleComplete = function() {
