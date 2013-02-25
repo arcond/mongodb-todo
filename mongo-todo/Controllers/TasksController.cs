@@ -3,6 +3,7 @@ using Domain;
 using mongo_todo.Models;
 using MongoDB.Bson;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -69,14 +70,52 @@ namespace mongo_todo.Controllers
 			return response;
 		}
 
-		public HttpResponseMessage Put(string userId, TaskModel[] task)
+		public HttpResponseMessage Put(string userId, TaskModel[] tasks)
 		{
-			return this.Request.CreateResponse(HttpStatusCode.Unused);
+			if (tasks == null || tasks.Any(x => string.IsNullOrWhiteSpace(x.Id)))
+				return this.Request.CreateResponse(HttpStatusCode.BadRequest);
+
+			try {
+				var user = _userRepository.Get(ObjectId.Parse(userId));
+				//foreach (var todo in user.GetTasks()) {
+				//	user.RemoveTask(todo.Id);
+				//}
+
+				foreach (var model in tasks) {
+					user.UpdateTask(ObjectId.Parse(model.Id), model.Description, model.Completed);
+				}
+				_userRepository.Update(user);
+			} catch (NullReferenceException ex) {
+				return this.Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
+			} catch (Exception ex) {
+				return this.Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+			}
+
+			var response = this.Request.CreateResponse(HttpStatusCode.OK);
+			response.Headers.Add("Type", typeof(TaskModel[]).Name);
+			return response;
 		}
 
-		public HttpResponseMessage Patch(string userId, TaskModel[] task)
+		public HttpResponseMessage Patch(string userId, TaskModel[] tasks)
 		{
-			return this.Request.CreateResponse(HttpStatusCode.Unused);
+			if (tasks == null || tasks.Any(x => string.IsNullOrWhiteSpace(x.Id)))
+				return this.Request.CreateResponse(HttpStatusCode.BadRequest);
+
+			try {
+				var user = _userRepository.Get(ObjectId.Parse(userId));
+				foreach (var model in tasks) {
+					user.UpdateTask(ObjectId.Parse(model.Id), model.Description, model.Completed);
+				}
+				_userRepository.Update(user);
+			} catch (NullReferenceException ex) {
+				return this.Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
+			} catch (Exception ex) {
+				return this.Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+			}
+
+			var response = this.Request.CreateResponse(HttpStatusCode.OK);
+			response.Headers.Add("Type", typeof(TaskModel[]).Name);
+			return response;
 		}
 
 		public HttpResponseMessage Post(string userId, TaskModel task)
