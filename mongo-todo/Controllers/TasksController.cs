@@ -77,13 +77,10 @@ namespace mongo_todo.Controllers
 
 			try {
 				var user = _userRepository.Get(ObjectId.Parse(userId));
-				//foreach (var todo in user.GetTasks()) {
-				//	user.RemoveTask(todo.Id);
-				//}
-
-				foreach (var model in tasks) {
-					user.UpdateTask(ObjectId.Parse(model.Id), model.Description, model.Completed);
-				}
+				var todos = user.GetTasks();
+				foreach (var model in tasks)
+					todos = todos.Where(x => x.Id.Equals(ObjectId.Parse(model.Id))).ToArray();
+				user.SetTasks(todos);
 				_userRepository.Update(user);
 			} catch (NullReferenceException ex) {
 				return this.Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
