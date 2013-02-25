@@ -3,9 +3,9 @@
 </div>
 <div class="span4">
 	{{#if completed}}
-	<span class="description"><del>{{description}}</del></span>
+	<span class="description"><del>{{description}}</del></span><i class="remove-task icon-remove-sign"></i>
 	{{else}}
 	<input class="description" value="{{description}}" placeholder="{{#if description}}{{description}}{{else}}Task...{{/if}}" />
-	{{#unless id}}<button class="add-task">Add Task</button>{{/unless}}
+	{{#unless id}}<i class="add-task icon-plus-sign">Add Task</i>{{/unless}}
 	{{/if}}
 </div>
