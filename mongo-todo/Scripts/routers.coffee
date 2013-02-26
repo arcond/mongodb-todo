@@ -9,20 +9,15 @@ define [
 	class Router extends Backbone.Router
 		routes:
 			'': 'root'
-			':userId': 'tasks'
-
-		initialize: (options) ->
-			@mainPage = new Views.MainPage
-			super options		
+			':userId': 'tasks'	
 
 		root: ->
-			@mainPage.removeSubViews()
 			@mainPage = new Views.MainPage
 			@mainPage.render()
 			return
 
 		tasks: (userId) ->
-			@mainPage.removeSubViews()
+			console.log userId
 			@mainPage = new Views.MainPage userId: userId
 			@mainPage.render()
 			return

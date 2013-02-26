@@ -18,19 +18,13 @@
         ':userId': 'tasks'
       };
 
-      Router.prototype.initialize = function(options) {
-        this.mainPage = new Views.MainPage;
-        return Router.__super__.initialize.call(this, options);
-      };
-
       Router.prototype.root = function() {
-        this.mainPage.removeSubViews();
         this.mainPage = new Views.MainPage;
         this.mainPage.render();
       };
 
       Router.prototype.tasks = function(userId) {
-        this.mainPage.removeSubViews();
+        console.log(userId);
         this.mainPage = new Views.MainPage({
           userId: userId
         });
