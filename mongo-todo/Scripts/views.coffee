@@ -6,120 +6,74 @@ define [
 	'collections'
 ], ($, _, Backbone, Models, Collections) ->
 	class BaseView extends Backbone.View
-		render: ->
-			super()
-			@trigger 'rendered'
-			@
+		
 
-	class Page extends BaseView
-		subviews: []
-
-		constructor: (options) ->
-			@subviews = []
-			super options
-
-		remove: ->
-			@trigger 'removed', @
-			@removeSubViews()
-			@$el.fadeOut 'fast', ->
-				$(@).remove()
-				return
-			super()
-
-		addSubView: (view, insertMethod = 'append', targetSelector = null) ->
-			@subviews.push view
-			view.on 'removed', @_removeSubView, @
-			unless targetSelector then @$el[insertMethod] view.render().el
-			else @$el.find(targetSelector)[insertMethod] view.render().el
-			@ # we return this to allow chaining
-
-		removeSubViews: ->
-			_.invoke @subviews, 'remove'
-			@subviews = []
-			return
-
-		@_removeSubView: (view) ->
-			@subviews = _.without @subviews, view
-			return
-
-	class MainPage extends Page
+	class MainPage extends BaseView
 		el: '#main-content'
 
 		initialize: (options) ->
 			@userId = options.userId if options?.userId
+			if @userId then @setUser new Models.User id: @userId else @setUser new Models.User
+
 			@users = new Collections.Users
 			@todos = new Collections.Todos
-			if @userId then @setUser new Models.User id: @userId else @setUser new Models.User
+
 			@toolbarView = new ToolbarView collection: @users
 			@userView = new UserView model: @user
-			@todoListView = new TodoListView
-			@listenTo @users, 'reset', =>
-				@renderToolbar()
-				return
-			super options
-
-		render: ->
-			super()
-			@users.fetch()
-			@
-
-		renderToolbar: ->
-			@stopListening @toolbarView
-			@toolbarView.remove()
-			@toolbarView = new ToolbarView collection: @users
+			@todoListView = new TodoListView collection: @todos
+			
+			@listenTo @users, 'reset', @renderToolbar
+			@listenTo @todos, 'reset', @renderTodos
+			@listenTo @todos, 'add', @renderTodos
+			@listenTo @todos, 'remove', @renderTodos
 			@listenTo @toolbarView, 'users:add', =>
-				Backbone.history.navigate '#0', false
-				@toolbarView.setUser @userId
 				@setUser new Models.User
 				@renderUser()
 				return
 			@listenTo @toolbarView, 'users:select', (userModel) =>
 				if userModel
 					@setUser userModel
-					@user.fetch()
-					Backbone.history.navigate "##{@user.id}", false
 				else
 					@toolbarView.trigger 'users:add'
 				return
 			@listenTo @toolbarView, 'save-all', =>
 				@todos.save() if @todos
 				return
-			@addSubView @toolbarView, 'html'
-			@user.fetch() if @userId and @userId isnt 0 and @userId isnt '0'
+
+			super options
+
+		render: ->
+			@users.fetch()
+			@
+
+		renderToolbar: ->
+			@toolbarView.$el.empty()
+			@toolbarView.collection = @users
+			@$el.html @toolbarView.render().el
+			@toolbarView.setUser @userId
+			@user.fetch() if @user.id and @userId isnt 0 and @userId isnt '0'
 			@
 
 		renderUser: ->
-			@stopListening @userView
-			@stopListening @todoListView
-			@userView.remove()
-			@todoListView.remove()
-			@userView = new UserView model: @user
-			@listenTo @userView, 'rendered', =>
-				if @user?.references?.TaskModels
-					@todos = undefined
-					@todos = new Collections.Todos url: @user.references.TaskModels
-					@listenTo @todos, 'reset', @renderTodos
-					@todos.fetch()
-				return
-			@addSubView @userView
+			@userView.$el.empty()
+			@todoListView.$el.empty()
+			@userView.model = @user
+			@$el.append @userView.render().el
 			@
 
 		renderTodos: ->
-			@stopListening @todoListView
-			@todoListView.remove()
-			@todoListView = new TodoListView collection: @todos
-			@addSubView @todoListView
-			@listenTo @todoListView, 'rendered', @renderTodo
-			@addSubView @todoListView
+			@todoListView.$el.empty()
+			@todoListView.collection = @todos
+			@$el.append @todoListView.render().el
+			@renderTodo()
 			@
 
 		renderTodo: ->
-			if @user?.references?.TaskModels
-				@todos.each (todoModel) =>
-					todoModel.urlRoot = @user.references.TaskModels
-					view = new TodoView model: todoModel
-					@addSubView view, 'append', 'ul.todos'
-					return
+			@todos.each (todoModel) =>
+				todoModel.urlRoot = @user.references.TaskModels
+				view = new TodoView model: todoModel
+				@$el.find('ul.todos').append view.render().el
+				return
 			@renderNewTodo()
 			@
 
@@ -129,7 +83,8 @@ define [
 				@todos.add newTodo
 				return
 			view = new TodoView model: newTodo
-			@addSubView view, 'append', 'ul.todos'
+			@$el.find('ul.todos').append view.render().el
+			@
 
 		setUser: (user) ->
 			if user
@@ -137,14 +92,26 @@ define [
 				@user = user
 				@listenTo @user, 'change:headers', =>
 					@renderUser()
+					@setTodos()
 					return
+				@userId = if @user.id then @user.id else 0
 				unless user.id
+					Backbone.history.navigate '#0', false
 					@listenTo @user, 'change:id', =>
 						@users.add @user
 						@userId = @user.id
 						Backbone.history.navigate "##{@userId}", false
-						@toolbarView.setUser @userId
 						return
+				else 
+					@user.fetch() if @toolbarView
+					Backbone.history.navigate "##{@user.id}", false
+			@toolbarView.setUser @userId if @toolbarView
+			return
+
+		setTodos: ->
+			if @user?.references?.TaskModels
+				@todos.url = @user.references.TaskModels
+				@todos.fetch()
 			return
 
 	class ToolbarView extends BaseView
@@ -215,8 +182,6 @@ define [
 		initialize: (options) ->
 			if @collection
 				@listenTo @collection, 'reset', @render
-				@listenTo @collection, 'add', @render
-				@listenTo @collection, 'remove', @render
 			super options
 
 		render: ->
