@@ -59,6 +59,7 @@ define [
 			@todoListView.$el.empty()
 			@userView.model = @user
 			@$el.append @userView.render().el
+			@toolbarView.setUser @userId if @toolbarView
 			@
 
 		renderTodos: ->
@@ -105,7 +106,6 @@ define [
 				else 
 					@user.fetch() if @toolbarView
 					Backbone.history.navigate "##{@user.id}", false
-			@toolbarView.setUser @userId if @toolbarView
 			return
 
 		setTodos: ->
@@ -139,7 +139,8 @@ define [
 			return
 
 		setUser: (userId) ->
-			@$el.find("#select-user > option[value=#{userId}]").attr 'selected', 'selected'
+			@$el.find('#select-user>option[selected]').removeAttr 'selected'
+			@$el.find("#select-user>option[value=#{userId}]").attr 'selected', 'selected'
 			return
 
 		selectUser: (ev) ->

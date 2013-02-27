@@ -93,6 +93,9 @@
         this.todoListView.$el.empty();
         this.userView.model = this.user;
         this.$el.append(this.userView.render().el);
+        if (this.toolbarView) {
+          this.toolbarView.setUser(this.userId);
+        }
         return this;
       };
 
@@ -158,9 +161,6 @@
             Backbone.history.navigate("#" + this.user.id, false);
           }
         }
-        if (this.toolbarView) {
-          this.toolbarView.setUser(this.userId);
-        }
       };
 
       MainPage.prototype.setTodos = function() {
@@ -214,7 +214,8 @@
       };
 
       ToolbarView.prototype.setUser = function(userId) {
-        this.$el.find("#select-user > option[value=" + userId + "]").attr('selected', 'selected');
+        this.$el.find('#select-user>option[selected]').removeAttr('selected');
+        this.$el.find("#select-user>option[value=" + userId + "]").attr('selected', 'selected');
       };
 
       ToolbarView.prototype.selectUser = function(ev) {
