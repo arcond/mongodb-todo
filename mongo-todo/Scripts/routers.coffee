@@ -17,7 +17,6 @@ define [
 			return
 
 		tasks: (userId) ->
-			console.log userId
 			@mainPage = new Views.MainPage userId: userId
 			@mainPage.render()
 			return

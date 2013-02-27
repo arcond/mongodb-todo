@@ -24,7 +24,6 @@
       };
 
       Router.prototype.tasks = function(userId) {
-        console.log(userId);
         this.mainPage = new Views.MainPage({
           userId: userId
         });
