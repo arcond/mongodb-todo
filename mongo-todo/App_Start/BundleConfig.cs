@@ -21,6 +21,7 @@ namespace mongo_todo
 
 			bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
 						"~/content/bootstrap.css"
+						, "~/content/font-awesome.css"
 						));
 		}
 	}
