@@ -2,12 +2,12 @@
 <div class="row center">
 	{{#if id}}
 	{{#unless editing}}
-	<h3 class="span3">{{name}}&nbsp;&nbsp;&nbsp;&nbsp;<i id="edit-user" class="icon-edit icon"></i></h3>
+	<h3 class="span3">{{name}}&nbsp;&nbsp;&nbsp;&nbsp;<i id="edit-user" class="icon-edit icon-white icon btn btn-inverse"></i></h3>
 	{{else}}
-	<input id="user-name" placeholder="{{name}}" value="{{name}}" /><i id="update-user" class="icon-ok icon"></i><i id="cancel-user" class="icon-remove icon"></i>
+	<input id="user-name" placeholder="{{name}}" value="{{name}}" /><i id="update-user" class="icon-ok icon-white icon btn btn-success"></i><i id="cancel-user" class="icon-remove icon-white icon btn btn-danger"></i>
 	{{/unless}}
 	{{else}}
-	<input id="user-name" placeholder="Name..." /><i id="save-user" class="icon-plus-sign icon"></i>
+	<input id="user-name" placeholder="Name..." /><i id="save-user" class="icon-plus-sign icon-white icon btn btn-success"></i>
 	{{/if}}
 </div>
 <div class="row">&nbsp;</div>
