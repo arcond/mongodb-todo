@@ -242,15 +242,9 @@
       UserView.prototype.events = {
         'keyup #user-name': 'updateUserName',
         'click #save-user': 'saveUser',
-        'click #edit-user': 'editUser'
-      };
-
-      UserView.prototype.initialize = function(options) {
-        if (options != null ? options.model : void 0) {
-          this.model = options.model;
-          this.listenTo(this.model, 'change', this.render);
-        }
-        return UserView.__super__.initialize.call(this, options);
+        'click #edit-user': 'editUser',
+        'click #update-user': 'saveUser',
+        'click #cancel-user': 'render'
       };
 
       UserView.prototype.render = function() {
@@ -263,7 +257,7 @@
       };
 
       UserView.prototype.updateUserName = function(ev) {
-        this.model.updateName($(ev.target).val());
+        this.model.updateName(this.$el.find('input').val());
       };
 
       UserView.prototype.saveUser = function(ev) {
@@ -277,9 +271,6 @@
         if (ev != null ? ev.preventDefault : void 0) {
           ev.preventDefault();
         }
-        console.log(this.model.toJSON({
-          edit: true
-        }));
         this.$el.html(this.template(this.model.toJSON({
           edit: true
         })));
