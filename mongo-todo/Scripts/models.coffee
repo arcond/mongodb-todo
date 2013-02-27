@@ -2,12 +2,7 @@ define [
 	'underscore'
 	'backbone'
 ], (_, Backbone) ->
-	class BaseModel extends Backbone.Model
-		constructor: (options) ->
-			super options
-			return
-
-	class User extends BaseModel
+	class User extends Backbone.Model
 		urlRoot: '/api/users'
 		defaults:
 			name: ''
@@ -16,7 +11,13 @@ define [
 			@set
 				name: newName
 
-	class Todo extends BaseModel
+		toJSON: (options) ->
+			json = super()
+			if options?.edit
+				json.edit = true
+			json
+
+	class Todo extends Backbone.Model
 		defaults:
 			description: ''
 			completed: false
