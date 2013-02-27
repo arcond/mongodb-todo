@@ -29,7 +29,7 @@
         var json;
         json = User.__super__.toJSON.call(this);
         if (options != null ? options.edit : void 0) {
-          json.edit = true;
+          json.editing = true;
         }
         return json;
       };

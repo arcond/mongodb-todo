@@ -14,7 +14,7 @@ define [
 		toJSON: (options) ->
 			json = super()
 			if options?.edit
-				json.edit = true
+				json.editing = true
 			json
 
 	class Todo extends Backbone.Model
