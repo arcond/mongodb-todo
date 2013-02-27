@@ -4,18 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   define(['jquery', 'underscore', 'backbone', 'models', 'collections'], function($, _, Backbone, Models, Collections) {
-    var BaseView, MainPage, TodoListView, TodoView, ToolbarView, UserView;
-    BaseView = (function(_super) {
-
-      __extends(BaseView, _super);
-
-      function BaseView() {
-        return BaseView.__super__.constructor.apply(this, arguments);
-      }
-
-      return BaseView;
-
-    })(Backbone.View);
+    var MainPage, TodoListView, TodoView, ToolbarView, UserView;
     MainPage = (function(_super) {
 
       __extends(MainPage, _super);
@@ -173,7 +162,7 @@
 
       return MainPage;
 
-    })(BaseView);
+    })(Backbone.View);
     ToolbarView = (function(_super) {
       var _ref;
 
@@ -236,7 +225,7 @@
 
       return ToolbarView;
 
-    })(BaseView);
+    })(Backbone.View);
     UserView = (function(_super) {
       var _ref;
 
@@ -277,7 +266,7 @@
 
       return UserView;
 
-    })(BaseView);
+    })(Backbone.View);
     TodoListView = (function(_super) {
       var _ref;
 
@@ -305,7 +294,7 @@
 
       return TodoListView;
 
-    })(BaseView);
+    })(Backbone.View);
     TodoView = (function(_super) {
       var _ref;
 
@@ -364,7 +353,7 @@
 
       return TodoView;
 
-    })(BaseView);
+    })(Backbone.View);
     return {
       MainPage: MainPage
     };

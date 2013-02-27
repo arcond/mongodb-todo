@@ -5,10 +5,7 @@ define [
 	'models'
 	'collections'
 ], ($, _, Backbone, Models, Collections) ->
-	class BaseView extends Backbone.View
-		
-
-	class MainPage extends BaseView
+	class MainPage extends Backbone.View
 		el: '#main-content'
 
 		initialize: (options) ->
@@ -114,7 +111,7 @@ define [
 				@todos.fetch()
 			return
 
-	class ToolbarView extends BaseView
+	class ToolbarView extends Backbone.View
 		className: 'navbar navbar-fixed-top'
 		template: Handlebars.compile $('#toolbar-template').html() ? ''
 		events:
@@ -156,7 +153,7 @@ define [
 			else $('#add-user').disable()
 			return
 
-	class UserView extends BaseView
+	class UserView extends Backbone.View
 		className: 'container'
 		template: Handlebars.compile $('#user-template').html() ? ''
 		events:
@@ -176,7 +173,7 @@ define [
 			@model.save()
 			return
 
-	class TodoListView extends BaseView
+	class TodoListView extends Backbone.View
 		className: 'container'
 		template: Handlebars.compile $('#todo-list-template').html() ? ''
 
@@ -189,7 +186,7 @@ define [
 			@$el.html @template()
 			super()
 
-	class TodoView extends BaseView
+	class TodoView extends Backbone.View
 		className: 'row'
 		tagName: 'li'
 		template: Handlebars.compile $('#todo-template').html() ? ''
