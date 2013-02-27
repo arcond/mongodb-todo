@@ -159,6 +159,13 @@ define [
 		events:
 			'keyup #user-name': 'updateUserName'
 			'click #save-user': 'saveUser'
+			'click #edit-user': 'editUser'
+
+		initialize: (options) ->
+			if options?.model
+				@model = options.model
+				@listenTo @model, 'change', @render
+			super options
 
 		render: ->
 			if @model then @$el.html @template @model.toJSON() else @$el.html @template()
@@ -171,6 +178,12 @@ define [
 		saveUser: (ev) ->
 			ev.preventDefault() if ev?.preventDefault
 			@model.save()
+			return
+
+		editUser: (ev) ->
+			ev.preventDefault() if ev?.preventDefault
+			console.log @model.toJSON edit: true
+			@$el.html @template @model.toJSON edit: true
 			return
 
 	class TodoListView extends Backbone.View
