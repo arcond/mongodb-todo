@@ -1,11 +1,17 @@
 ﻿<div class="span1">
 	<input type="checkbox" {{#if completed}}checked="checked"{{/if}} {{#unless id}}disabled="disabled"{{/unless}}/>
 </div>
-<div class="span4">
+<div class="span3">
 	{{#if completed}}
-	<span class="description"><del>{{description}}</del></span>&nbsp;<i class="remove-task icon-remove-sign icon"></i>
+	<span class="description"><del>{{description}}</del></span>
 	{{else}}
 	<input class="description" value="{{description}}" placeholder="{{#if description}}{{description}}{{else}}Task...{{/if}}" />
-	{{#unless id}}&nbsp;<i class="add-task icon-plus-sign icon"></i>{{/unless}}
+	{{/if}}
+</div>
+<div class="span1">
+	{{#if completed}}
+	<i class="remove-task icon-remove-sign icon"></i>
+	{{else}}
+	{{#unless id}}<i class="add-task icon-plus-sign icon"></i>{{/unless}}
 	{{/if}}
 </div>

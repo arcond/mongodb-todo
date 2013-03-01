@@ -1,13 +1,31 @@
 ﻿<div class="row">&nbsp;</div><div class="row">&nbsp;</div><div class="row">&nbsp;</div>
-<div class="row center">
+<div class="row">
 	{{#if id}}
 	{{#unless editing}}
-	<h3 class="span3">{{name}}&nbsp;&nbsp;&nbsp;&nbsp;<i id="edit-user" class="icon-edit icon"></i></h3>
+	<h3>
+		<span class="span1">
+			<i id="edit-user" class="icon-edit icon"></i>
+		</span>
+		<span class="span4">{{name}}</span>
+	</h3>
 	{{else}}
-	<input id="user-name" placeholder="{{name}}" value="{{name}}" />&nbsp;<i id="update-user" class="icon-ok icon"></i>&nbsp;<i id="cancel-user" class="icon-remove icon"></i>
+	<div class="span4">
+		<input id="user-name" class="span4" placeholder="{{name}}" value="{{name}}" />
+	</div>
+	<div class="span1">
+		<i id="update-user" class="icon-ok icon"></i>
+	</div>
+	<div class="span1">
+		<i id="cancel-user" class="icon-remove icon"></i>
+	</div>
 	{{/unless}}
 	{{else}}
-	<input id="user-name" placeholder="Name..." />&nbsp;<i id="save-user" class="icon-plus-sign icon"></i>
+	<div class="span4">
+		<input id="user-name" class="span4" placeholder="Name..." />
+	</div>
+	<div class="span1">
+		<i id="save-user" class="span1 icon-plus-sign icon"></i>
+	</div>
 	{{/if}}
 </div>
 <div class="row">&nbsp;</div>
