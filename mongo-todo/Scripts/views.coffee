@@ -9,8 +9,8 @@ define [
 		el: '#main-content'
 
 		initialize: (options) ->
+			@setUser new Models.User
 			@userId = options.userId if options?.userId
-			if @userId then @setUser new Models.User id: @userId else @setUser new Models.User
 
 			@users = new Collections.Users
 			@todos = new Collections.Todos
@@ -47,8 +47,7 @@ define [
 			@toolbarView.$el.empty()
 			@toolbarView.collection = @users
 			@$el.html @toolbarView.render().el
-			@toolbarView.setUser @userId
-			@user.fetch() if @user.id and @userId isnt 0 and @userId isnt '0'
+			@setUser @users.get @userId if @userId isnt 0 and @userId isnt '0'
 			@
 
 		renderUser: ->
@@ -56,7 +55,6 @@ define [
 			@todoListView.$el.empty()
 			@userView.model = @user
 			@$el.append @userView.render().el
-			@toolbarView.setUser @userId if @toolbarView
 			@
 
 		renderTodos: ->
@@ -101,8 +99,10 @@ define [
 						Backbone.history.navigate "##{@userId}", false
 						return
 				else 
-					@user.fetch() if @toolbarView
-					Backbone.history.navigate "##{@user.id}", false
+					xhr = @user.fetch()
+					xhr.done =>
+						Backbone.history.navigate "##{@user.id}", false
+						return
 			return
 
 		setTodos: ->
@@ -120,18 +120,23 @@ define [
 			'click #save': 'save'
 
 		initialize: (options) ->
-			@listenTo @collection, 'reset', @render
-			@listenTo @collection, 'add', @render
-			@listenTo @collection, 'remove', @render
-			@listenTo @collection, 'change', @render
+			@listenTo @collection, 'reset', @updateUser
+			@listenTo @collection, 'add', @updateUser
+			@listenTo @collection, 'remove', @updateUser
+			@listenTo @collection, 'change', @updateUser
 			super options
 
 		render: ->
 			@$el.html @template @collection.toJSON()
 			super()
 
-		addUser: (ev) ->
-			ev.preventDefault() if ev?.preventDefault
+		updateUser: (model) ->
+			@render()
+			if model and model instanceof Backbone.Model
+				@setUser model.id
+			return
+
+		addUser: ->
 			@trigger 'users:add'
 			return
 
@@ -157,7 +162,6 @@ define [
 		className: 'container'
 		template: Handlebars.compile $('#user-template').html() ? ''
 		events:
-			'keyup #user-name': 'updateUserName'
 			'click #save-user': 'saveUser'
 			'click #edit-user': 'editUser'
 			'click #update-user': 'saveUser'
@@ -167,17 +171,16 @@ define [
 			if @model then @$el.html @template @model.toJSON() else @$el.html @template()
 			super()
 
-		updateUserName: (ev) ->
+		updateUserName: ->
 			@model.updateName @$el.find('input').val()
 			return
 
-		saveUser: (ev) ->
-			ev.preventDefault() if ev?.preventDefault
+		saveUser: ->
+			@updateUserName()
 			@model.save()
 			return
 
-		editUser: (ev) ->
-			ev.preventDefault() if ev?.preventDefault
+		editUser: ->
 			@$el.html @template @model.toJSON edit: true
 			return
 
@@ -218,13 +221,11 @@ define [
 			@model.updateDescription $(ev.target).val()
 			return
 
-		addTask: (ev) ->
-			ev.preventDefault() if ev?.preventDefault
+		addTask: ->
 			@model.save()
 			return
 
-		removeTask: (ev) ->
-			ev.preventDefault() if ev?.preventDefault
+		removeTask: ->
 			@model.destroy()
 			return
 
