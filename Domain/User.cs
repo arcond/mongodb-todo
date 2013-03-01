@@ -19,6 +19,8 @@ namespace Domain
 		}
 
 		public string Name { get; internal set; }
+
+		[BsonElement]
 		internal IList<ObjectId> Tasks { get; set; }
 
 		[Dependency, BsonIgnore]
