@@ -17,15 +17,9 @@
 
       MainPage.prototype.initialize = function(options) {
         var _this = this;
+        this.setUser(new Models.User);
         if (options != null ? options.userId : void 0) {
           this.userId = options.userId;
-        }
-        if (this.userId) {
-          this.setUser(new Models.User({
-            id: this.userId
-          }));
-        } else {
-          this.setUser(new Models.User);
         }
         this.users = new Collections.Users;
         this.todos = new Collections.Todos;
@@ -70,9 +64,8 @@
         this.toolbarView.$el.empty();
         this.toolbarView.collection = this.users;
         this.$el.html(this.toolbarView.render().el);
-        this.toolbarView.setUser(this.userId);
-        if (this.user.id && this.userId !== 0 && this.userId !== '0') {
-          this.user.fetch();
+        if (this.userId !== 0 && this.userId !== '0') {
+          this.setUser(this.users.get(this.userId));
         }
         return this;
       };
@@ -82,9 +75,6 @@
         this.todoListView.$el.empty();
         this.userView.model = this.user;
         this.$el.append(this.userView.render().el);
-        if (this.toolbarView) {
-          this.toolbarView.setUser(this.userId);
-        }
         return this;
       };
 
@@ -127,7 +117,8 @@
       };
 
       MainPage.prototype.setUser = function(user) {
-        var _this = this;
+        var xhr,
+          _this = this;
         if (user) {
           this.stopListening(this.user);
           this.user = user;
@@ -144,10 +135,13 @@
               Backbone.history.navigate("#" + _this.userId, false);
             });
           } else {
-            if (this.toolbarView) {
-              this.user.fetch();
-            }
-            Backbone.history.navigate("#" + this.user.id, false);
+            xhr = this.user.fetch();
+            xhr.done(function() {
+              if (_this.toolbarView) {
+                _this.toolbarView.setUser(_this.user.id);
+              }
+              Backbone.history.navigate("#" + _this.user.id, false);
+            });
           }
         }
       };
@@ -183,10 +177,10 @@
       };
 
       ToolbarView.prototype.initialize = function(options) {
-        this.listenTo(this.collection, 'reset', this.render);
-        this.listenTo(this.collection, 'add', this.render);
-        this.listenTo(this.collection, 'remove', this.render);
-        this.listenTo(this.collection, 'change', this.render);
+        this.listenTo(this.collection, 'reset', this.updateUser);
+        this.listenTo(this.collection, 'add', this.updateUser);
+        this.listenTo(this.collection, 'remove', this.updateUser);
+        this.listenTo(this.collection, 'change', this.updateUser);
         return ToolbarView.__super__.initialize.call(this, options);
       };
 
@@ -195,23 +189,33 @@
         return ToolbarView.__super__.render.call(this);
       };
 
+      ToolbarView.prototype.updateUser = function(model) {
+        this.render();
+        if (model && model instanceof Backbone.Model) {
+          this.setUser(model.id);
+        }
+      };
+
       ToolbarView.prototype.addUser = function(ev) {
         if (ev != null ? ev.preventDefault : void 0) {
           ev.preventDefault();
         }
+        this.setUser(0);
         this.trigger('users:add');
       };
 
       ToolbarView.prototype.setUser = function(userId) {
-        this.$el.find('#select-user>option[selected]').removeAttr('selected');
-        this.$el.find("#select-user>option[value=" + userId + "]").attr('selected', 'selected');
+        this.$el.find('#select-user').val(userId);
       };
 
       ToolbarView.prototype.selectUser = function(ev) {
         this.trigger('users:select', this.collection.get($(ev.target).val()));
       };
 
-      ToolbarView.prototype.save = function() {
+      ToolbarView.prototype.save = function(ev) {
+        if (ev != null ? ev.preventDefault : void 0) {
+          ev.preventDefault();
+        }
         this.trigger('save-all');
       };
 
@@ -240,7 +244,6 @@
       UserView.prototype.template = Handlebars.compile((_ref = $('#user-template').html()) != null ? _ref : '');
 
       UserView.prototype.events = {
-        'keyup #user-name': 'updateUserName',
         'click #save-user': 'saveUser',
         'click #edit-user': 'editUser',
         'click #update-user': 'saveUser',
@@ -256,21 +259,16 @@
         return UserView.__super__.render.call(this);
       };
 
-      UserView.prototype.updateUserName = function(ev) {
+      UserView.prototype.updateUserName = function() {
         this.model.updateName(this.$el.find('input').val());
       };
 
-      UserView.prototype.saveUser = function(ev) {
-        if (ev != null ? ev.preventDefault : void 0) {
-          ev.preventDefault();
-        }
+      UserView.prototype.saveUser = function() {
+        this.updateUserName();
         this.model.save();
       };
 
-      UserView.prototype.editUser = function(ev) {
-        if (ev != null ? ev.preventDefault : void 0) {
-          ev.preventDefault();
-        }
+      UserView.prototype.editUser = function() {
         this.$el.html(this.template(this.model.toJSON({
           edit: true
         })));
@@ -345,17 +343,11 @@
         this.model.updateDescription($(ev.target).val());
       };
 
-      TodoView.prototype.addTask = function(ev) {
-        if (ev != null ? ev.preventDefault : void 0) {
-          ev.preventDefault();
-        }
+      TodoView.prototype.addTask = function() {
         this.model.save();
       };
 
-      TodoView.prototype.removeTask = function(ev) {
-        if (ev != null ? ev.preventDefault : void 0) {
-          ev.preventDefault();
-        }
+      TodoView.prototype.removeTask = function() {
         this.model.destroy();
       };
 
