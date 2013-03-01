@@ -101,6 +101,7 @@ define [
 				else 
 					xhr = @user.fetch()
 					xhr.done =>
+						@toolbarView.setUser @user.id if @toolbarView
 						Backbone.history.navigate "##{@user.id}", false
 						return
 			return
@@ -136,20 +137,22 @@ define [
 				@setUser model.id
 			return
 
-		addUser: ->
+		addUser: (ev) ->
+			ev.preventDefault() if ev?.preventDefault
+			@setUser 0
 			@trigger 'users:add'
 			return
 
 		setUser: (userId) ->
-			@$el.find('#select-user>option[selected]').removeAttr 'selected'
-			@$el.find("#select-user>option[value=#{userId}]").attr 'selected', 'selected'
+			@$el.find('#select-user').val userId
 			return
 
 		selectUser: (ev) ->
 			@trigger 'users:select', @collection.get $(ev.target).val()
 			return
 
-		save: ->
+		save: (ev) ->
+			ev.preventDefault() if ev?.preventDefault
 			@trigger 'save-all'
 			return
 

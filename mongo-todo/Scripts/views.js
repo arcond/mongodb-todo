@@ -137,6 +137,9 @@
           } else {
             xhr = this.user.fetch();
             xhr.done(function() {
+              if (_this.toolbarView) {
+                _this.toolbarView.setUser(_this.user.id);
+              }
               Backbone.history.navigate("#" + _this.user.id, false);
             });
           }
@@ -193,20 +196,26 @@
         }
       };
 
-      ToolbarView.prototype.addUser = function() {
+      ToolbarView.prototype.addUser = function(ev) {
+        if (ev != null ? ev.preventDefault : void 0) {
+          ev.preventDefault();
+        }
+        this.setUser(0);
         this.trigger('users:add');
       };
 
       ToolbarView.prototype.setUser = function(userId) {
-        this.$el.find('#select-user>option[selected]').removeAttr('selected');
-        this.$el.find("#select-user>option[value=" + userId + "]").attr('selected', 'selected');
+        this.$el.find('#select-user').val(userId);
       };
 
       ToolbarView.prototype.selectUser = function(ev) {
         this.trigger('users:select', this.collection.get($(ev.target).val()));
       };
 
-      ToolbarView.prototype.save = function() {
+      ToolbarView.prototype.save = function(ev) {
+        if (ev != null ? ev.preventDefault : void 0) {
+          ev.preventDefault();
+        }
         this.trigger('save-all');
       };
 
