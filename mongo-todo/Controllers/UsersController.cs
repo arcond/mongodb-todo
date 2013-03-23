@@ -38,7 +38,7 @@ namespace mongo_todo.Controllers
 			}
 
 			response.Headers.Add("Type", typeof(UserModel[]).Name);
-			response.Headers.Add("Link", GetTaskHeaderLink(this.Request, response));
+			response.Headers.Add("Link", this.GetLinkHeader<TaskModel[]>(this.Request, response, "/tasks"));
 			return response;
 		}
 
@@ -59,7 +59,7 @@ namespace mongo_todo.Controllers
 
 			if (response == null) response = this.Request.CreateResponse(HttpStatusCode.NotModified);
 			response.Headers.Add("Type", typeof(UserModel).Name);
-			response.Headers.Add("Link", GetTaskHeaderLink(this.Request, response));
+			response.Headers.Add("Link", this.GetLinkHeader<TaskModel[]>(this.Request, response, "/tasks"));
 			return response;
 		}
 
@@ -89,7 +89,7 @@ namespace mongo_todo.Controllers
 			}
 
 			var response = this.Request.CreateResponse(HttpStatusCode.OK, user);
-			response.Headers.Add("Link", GetTaskHeaderLink(this.Request, response));
+			response.Headers.Add("Link", this.GetLinkHeader<TaskModel[]>(this.Request, response, "/tasks"));
 			response.Headers.Add("Type", typeof(UserModel).Name);
 			return response;
 		}
@@ -107,7 +107,7 @@ namespace mongo_todo.Controllers
 			}
 
 			var response = this.Request.CreateResponse(HttpStatusCode.OK);
-			response.Headers.Add("Link", GetTaskHeaderLink(this.Request, response));
+			response.Headers.Add("Link", this.GetLinkHeader<TaskModel[]>(this.Request, response, "/tasks"));
 			response.Headers.Add("Type", typeof(UserModel).Name);
 			return response;
 		}
@@ -124,7 +124,7 @@ namespace mongo_todo.Controllers
 
 			var response = this.Request.CreateResponse(HttpStatusCode.Created);
 			response.Headers.Location = new Uri(string.Format("{0}/{1}", this.Request.RequestUri.AbsoluteUri, newUser.Id));
-			response.Headers.Add("Link", GetTaskHeaderLink(this.Request, response, newUser.Id.ToString()));
+			response.Headers.Add("Link", this.GetLinkHeader<TaskModel[]>(this.Request, response, newUser.Id.ToString(), "/tasks"));
 			response.Headers.Add("Type", typeof(UserModel).Name);
 			return response;
 		}
@@ -147,7 +147,7 @@ namespace mongo_todo.Controllers
 			}
 
 			var response = this.Request.CreateResponse(HttpStatusCode.OK);
-			response.Headers.Add("Link", GetTaskHeaderLink(this.Request, response));
+			response.Headers.Add("Link", this.GetLinkHeader<TaskModel[]>(this.Request, response, "/tasks"));
 			response.Headers.Add("Type", typeof(UserModel).Name);
 			return response;
 		}
@@ -163,30 +163,6 @@ namespace mongo_todo.Controllers
 			}
 
 			return this.Request.CreateResponse(HttpStatusCode.OK);
-		}
-		
-		private string GetTaskHeaderLink(HttpRequestMessage request, HttpResponseMessage response)
-		{
-			return GetTaskHeaderLink(request, response, string.Empty);
-		}
-
-		private string GetTaskHeaderLink(HttpRequestMessage request, HttpResponseMessage response, string id)
-		{
-			var currentUri = this.Request.RequestUri.AbsoluteUri;
-			if (!string.IsNullOrEmpty(id)) currentUri = string.Concat(currentUri, "/", id);
-
-			var uri = new Uri(string.Concat(currentUri, "/tasks"));
-			var rel = typeof(TaskModel[]).Name;
-
-			string type = string.Empty;
-			if (response != null
-				&& response.Content != null
-				&& response.Content.Headers != null
-				&& response.Content.Headers.ContentType != null
-			)
-				type = response.Content.Headers.ContentType.MediaType;
-
-			return string.Format("<{0}>; rel={1}; type=\"{2}\"", uri, rel, type);
 		}
 	}
 }
