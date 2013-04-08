@@ -33,9 +33,9 @@ namespace mongo_todo
 				type = response.Content.Headers.ContentType.MediaType;
 
 			string location = string.Format("<{0}>", uri);
-			if (!string.IsNullOrWhiteSpace(rel)) string.Concat(location, "; rel=", rel);
-			if (!string.IsNullOrWhiteSpace(type)) string.Concat(location, "; type=\"", type, "\"");
-			if (!string.IsNullOrWhiteSpace(description)) string.Concat(location, "; title=\"", description, "\"");
+			if (!string.IsNullOrWhiteSpace(rel)) location = string.Concat(location, "; rel=", rel);
+			if (!string.IsNullOrWhiteSpace(type)) location = string.Concat(location, "; type=\"", type, "\"");
+			if (!string.IsNullOrWhiteSpace(description)) location = string.Concat(location, "; title=\"", description, "\"");
 
 			return location;
 		}
