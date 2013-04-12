@@ -8,7 +8,7 @@ namespace Domain
 		public static T ResolveDependency<T>(this T user)
 		{
 			var container = ServiceLocator.Current.GetInstance<IUnityContainer>();
-			return container.BuildUp<T>(user);
+			return container.BuildUp(user);
 		}
 	}
 }

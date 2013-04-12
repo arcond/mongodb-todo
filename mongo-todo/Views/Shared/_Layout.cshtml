@@ -1,20 +1,20 @@
 ﻿@using System.Web.Optimization
 <!DOCTYPE html>
 <html>
-<head>
-	<meta name="viewport" content="width=device-width" />
-	<title>@ViewBag.Title</title>
-	@*@Styles.Render("~/Content/css")*@
-	@Styles.Render("~/Content/themes/base/css")
-	@Styles.Render("~/Content/css")
-	@Scripts.Render("~/bundles/modernizr")
-	<script data-main="scripts/app" src="~/scripts/lib/require.js?bust=v2"></script>
-</head>
-<body>
-	<section id="main-content">
-		@RenderBody()
-	</section>
-	@RenderSection("templates", false)
-	@Scripts.Render("~/bundles/lib")
-</body>
+	<head>
+		<meta name="viewport" content="width=device-width" />
+		<title>@ViewBag.Title</title>
+		@*@Styles.Render("~/Content/css")*@
+		@Styles.Render("~/Content/themes/base/css")
+		@Styles.Render("~/Content/css")
+		@Scripts.Render("~/bundles/modernizr")
+		<script data-main="scripts/app" src="~/scripts/lib/require.js?bust=v2"> </script>
+	</head>
+	<body>
+		<section id="main-content">
+			@RenderBody()
+		</section>
+		@RenderSection("templates", false)
+		@Scripts.Render("~/bundles/lib")
+	</body>
 </html>

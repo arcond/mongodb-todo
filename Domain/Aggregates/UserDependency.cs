@@ -1,9 +1,9 @@
-﻿
-namespace Domain.Aggregates
+﻿namespace Domain.Aggregates
 {
 	public class UserDependency :IUserDependency
 	{
-		public UserDependency(ITaskFactory taskFactory, ITaskRepository taskRepository)
+		public UserDependency(
+			ITaskFactory taskFactory, ITaskRepository taskRepository)
 		{
 			TaskFactory = taskFactory;
 			TaskRepository = taskRepository;

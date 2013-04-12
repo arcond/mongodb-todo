@@ -8,6 +8,5 @@ namespace mongo_todo.Controllers
 		{
 			return View();
 		}
-
 	}
 }

@@ -4,6 +4,7 @@ using mongo_todo.Models;
 using MongoDB.Bson;
 using System;
 using System.Dynamic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -13,9 +14,11 @@ namespace mongo_todo.Controllers
 {
 	public class UsersController :ApiController
 	{
-		private readonly IUserRepository _userRepository;
 		private readonly IUserFactory _userFactory;
-		public UsersController(IUserRepository userRepository, IUserFactory userFactory)
+		private readonly IUserRepository _userRepository;
+
+		public UsersController(
+			IUserRepository userRepository, IUserFactory userFactory)
 		{
 			_userRepository = userRepository;
 			_userFactory = userFactory;
@@ -24,72 +27,110 @@ namespace mongo_todo.Controllers
 		public HttpResponseMessage Head()
 		{
 			HttpResponseMessage response = null;
-			if (this.Request.Headers.IfModifiedSince.HasValue) {
+			if (Request.Headers.IfModifiedSince.HasValue) {
 				try {
-					var users = _userRepository.GetAll().Where(x => x.LastModified.AsDateTime > this.Request.Headers.IfModifiedSince);
-					if (users != null && users.Any()) {
-						users.OrderBy(x => x.LastModified);
-						response = this.Request.CreateResponse(HttpStatusCode.OK);
-						response.Headers.Add("Last-Modified", users.First().LastModified.AsDateTime.ToString());
-					} else response = this.Request.CreateResponse(HttpStatusCode.NotModified);
+					IQueryable<User> users =
+						_userRepository.GetAll()
+									   .Where(
+											  x =>
+											  x.LastModified.AsDateTime
+											  > Request.Headers.IfModifiedSince);
+					if (users.Any()) {
+						users = users.OrderBy(x => x.LastModified);
+						response = Request.CreateResponse(HttpStatusCode.OK);
+						response.Headers.Add(
+											 "Last-Modified",
+											 users.First()
+												  .LastModified.AsDateTime.ToString(
+																				    CultureInfo
+																						.InvariantCulture));
+					} else response = Request.CreateResponse(HttpStatusCode.NotModified);
 				} catch (Exception ex) {
-					return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+					return Request.CreateResponse(
+												  HttpStatusCode.InternalServerError,
+												  ex.Message);
 				}
 			}
 
 			response.Headers.Add("Type", typeof(UserModel[]).Name);
-			response.Headers.Add("Link", this.GetLinkHeader<TaskModel[]>(this.Request, response, "/tasks"));
+			response.Headers.Add(
+								 "Link",
+								 this.GetLinkHeader<TaskModel[]>(
+																 Request,
+																 response,
+																 "/tasks"));
 			return response;
 		}
 
 		public HttpResponseMessage Head(string id)
 		{
 			HttpResponseMessage response = null;
-			if (this.Request.Headers.IfModifiedSince.HasValue) {
+			if (Request.Headers.IfModifiedSince.HasValue) {
 				try {
-					var user = _userRepository.Get(ObjectId.Parse(id));
-					if (user.LastModified.AsDateTime > this.Request.Headers.IfModifiedSince.Value) {
-						response = this.Request.CreateResponse(HttpStatusCode.OK);
-						response.Headers.Add("Last-Modified", user.LastModified.AsDateTime.ToString());
+					User user = _userRepository.Get(ObjectId.Parse(id));
+					if (user.LastModified.AsDateTime > Request.Headers.IfModifiedSince.Value) {
+						response = Request.CreateResponse(HttpStatusCode.OK);
+						response.Headers.Add(
+											 "Last-Modified",
+											 user.LastModified.AsDateTime.ToString(
+																				   CultureInfo
+																					   .InvariantCulture));
 					}
 				} catch (Exception ex) {
-					return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+					return Request.CreateResponse(
+												  HttpStatusCode.InternalServerError,
+												  ex.Message);
 				}
 			}
 
-			if (response == null) response = this.Request.CreateResponse(HttpStatusCode.NotModified);
+			if (response == null)
+				response = Request.CreateResponse(HttpStatusCode.NotModified);
 			response.Headers.Add("Type", typeof(UserModel).Name);
-			response.Headers.Add("Link", this.GetLinkHeader<TaskModel[]>(this.Request, response, "/tasks"));
+			response.Headers.Add(
+								 "Link",
+								 this.GetLinkHeader<TaskModel[]>(
+																 Request,
+																 response,
+																 "/tasks"));
 			return response;
 		}
 
 		public HttpResponseMessage Get()
 		{
-			UserModel[] users = null;
+			UserModel[] users;
 
 			try {
 				users = Mapper.Map<UserModel[]>(_userRepository.GetAll().ToArray());
 			} catch (Exception ex) {
-				return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+				return Request.CreateResponse(
+											  HttpStatusCode.InternalServerError, ex.Message);
 			}
 
-			var response = this.Request.CreateResponse(HttpStatusCode.OK, users);
+			HttpResponseMessage response = Request.CreateResponse(
+																  HttpStatusCode.OK,
+																  users);
 			response.Headers.Add("Type", typeof(UserModel[]).Name);
 			return response;
 		}
 
 		public HttpResponseMessage Get(string id)
 		{
-			UserModel user = null;
+			UserModel user;
 
 			try {
 				user = Mapper.Map<UserModel>(_userRepository.Get(ObjectId.Parse(id)));
 			} catch (Exception ex) {
-				return this.Request.CreateResponse(HttpStatusCode.NotFound, ex.Message);
+				return Request.CreateResponse(HttpStatusCode.NotFound, ex.Message);
 			}
 
-			var response = this.Request.CreateResponse(HttpStatusCode.OK, user);
-			response.Headers.Add("Link", this.GetLinkHeader<TaskModel[]>(this.Request, response, "/tasks"));
+			HttpResponseMessage response = Request.CreateResponse(
+																  HttpStatusCode.OK, user);
+			response.Headers.Add(
+								 "Link",
+								 this.GetLinkHeader<TaskModel[]>(
+																 Request,
+																 response,
+																 "/tasks"));
 			response.Headers.Add("Type", typeof(UserModel).Name);
 			return response;
 		}
@@ -97,34 +138,49 @@ namespace mongo_todo.Controllers
 		public HttpResponseMessage Put(UserModel user)
 		{
 			try {
-				var savedUser = _userRepository.Get(ObjectId.Parse(user.Id));
+				User savedUser = _userRepository.Get(ObjectId.Parse(user.Id));
 				savedUser.SetName(user.Name);
 				_userRepository.Update(savedUser);
 			} catch (NullReferenceException ex) {
-				return this.Request.CreateResponse(HttpStatusCode.Gone, ex.Message);
+				return Request.CreateResponse(HttpStatusCode.Gone, ex.Message);
 			} catch (Exception ex) {
-				return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+				return Request.CreateResponse(
+											  HttpStatusCode.InternalServerError, ex.Message);
 			}
 
-			var response = this.Request.CreateResponse(HttpStatusCode.OK);
-			response.Headers.Add("Link", this.GetLinkHeader<TaskModel[]>(this.Request, response, "/tasks"));
+			HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
+			response.Headers.Add(
+								 "Link",
+								 this.GetLinkHeader<TaskModel[]>(
+																 Request,
+																 response,
+																 "/tasks"));
 			response.Headers.Add("Type", typeof(UserModel).Name);
 			return response;
 		}
 
 		public HttpResponseMessage Post(UserModel user)
 		{
-			var newUser = _userFactory.CreateUser(user.Name);
+			User newUser = _userFactory.CreateUser(user.Name);
 
 			try {
 				newUser = _userRepository.Add(newUser);
 			} catch (Exception ex) {
-				return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+				return Request.CreateResponse(
+											  HttpStatusCode.InternalServerError, ex.Message);
 			}
 
-			var response = this.Request.CreateResponse(HttpStatusCode.Created);
-			response.Headers.Location = new Uri(string.Format("{0}/{1}", this.Request.RequestUri.AbsoluteUri, newUser.Id));
-			response.Headers.Add("Link", this.GetLinkHeader<TaskModel[]>(this.Request, response, newUser.Id.ToString(), "/tasks"));
+			HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created);
+			response.Headers.Location =
+				new Uri(
+					string.Format("{0}/{1}", Request.RequestUri.AbsoluteUri, newUser.Id));
+			response.Headers.Add(
+								 "Link",
+								 this.GetLinkHeader<TaskModel[]>(
+																 Request,
+																 response,
+																 newUser.Id.ToString(),
+																 "/tasks"));
 			response.Headers.Add("Type", typeof(UserModel).Name);
 			return response;
 		}
@@ -136,18 +192,24 @@ namespace mongo_todo.Controllers
 				if (user.HasProperty("Name")) newName = ((dynamic)user).Name;
 
 				if (newName != null) {
-					var savedUser = _userRepository.Get(ObjectId.Parse(id));
+					User savedUser = _userRepository.Get(ObjectId.Parse(id));
 					savedUser.SetName(newName);
-					_userRepository.Update(savedUser); 
+					_userRepository.Update(savedUser);
 				}
 			} catch (NullReferenceException ex) {
-				return this.Request.CreateResponse(HttpStatusCode.NotFound, ex.Message);
+				return Request.CreateResponse(HttpStatusCode.NotFound, ex.Message);
 			} catch (Exception ex) {
-				return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+				return Request.CreateResponse(
+											  HttpStatusCode.InternalServerError, ex.Message);
 			}
 
-			var response = this.Request.CreateResponse(HttpStatusCode.OK);
-			response.Headers.Add("Link", this.GetLinkHeader<TaskModel[]>(this.Request, response, "/tasks"));
+			HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
+			response.Headers.Add(
+								 "Link",
+								 this.GetLinkHeader<TaskModel[]>(
+																 Request,
+																 response,
+																 "/tasks"));
 			response.Headers.Add("Type", typeof(UserModel).Name);
 			return response;
 		}
@@ -157,12 +219,13 @@ namespace mongo_todo.Controllers
 			try {
 				_userRepository.Delete(ObjectId.Parse(id));
 			} catch (NullReferenceException ex) {
-				return this.Request.CreateResponse(HttpStatusCode.NotFound, ex.Message);
+				return Request.CreateResponse(HttpStatusCode.NotFound, ex.Message);
 			} catch (Exception ex) {
-				return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+				return Request.CreateResponse(
+											  HttpStatusCode.InternalServerError, ex.Message);
 			}
 
-			return this.Request.CreateResponse(HttpStatusCode.OK);
+			return Request.CreateResponse(HttpStatusCode.OK);
 		}
 	}
 }

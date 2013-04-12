@@ -55,7 +55,9 @@ namespace Domain
 		public void UpdateTask(ObjectId id, string description, bool completed)
 		{
 			var task = GetTask(id);
-			if (!task.Description.Equals(description, StringComparison.CurrentCultureIgnoreCase))
+			if (
+				!task.Description.Equals(
+										 description, StringComparison.CurrentCultureIgnoreCase))
 				task.SetDescription(description);
 
 			if (task.Completed != completed) task.Toggle();
@@ -73,8 +75,12 @@ namespace Domain
 
 		public void SetTasks(Task[] todos)
 		{
-			if (todos == null || todos.Any(x => x.Id == null || x.Id.Equals(ObjectId.Empty)))
-				throw new ArgumentNullException("Cannot add new tasks with no or default ID, please use the AddTask method first.", "todos.Id");
+			if (todos == null
+				|| todos.Any(x => x.Id == null || x.Id.Equals(ObjectId.Empty))) {
+				throw new ArgumentNullException(
+					"todos",
+					"Cannot add new tasks with no or default ID, please use the AddTask method first.");
+			}
 
 			if (!todos.Any(x => x.UserId.Equals(Id) || x.UserId.Equals(ObjectId.Empty)))
 				throw new ArgumentException("Cannot add tasks that belong to another user");

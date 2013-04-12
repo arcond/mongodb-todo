@@ -1,5 +1,4 @@
-﻿
-namespace Domain.Aggregates
+﻿namespace Domain.Aggregates
 {
 	public interface IUserDependency
 	{

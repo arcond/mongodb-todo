@@ -9,6 +9,7 @@ namespace Domain.Repository
 	public class TaskRepository :ITaskRepository
 	{
 		private readonly IContext _context;
+
 		public TaskRepository(IContext context)
 		{
 			_context = context;

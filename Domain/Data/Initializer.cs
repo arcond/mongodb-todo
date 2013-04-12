@@ -5,6 +5,7 @@ namespace Domain.Data
 	public class Initializer
 	{
 		private readonly MongoDatabase _database;
+
 		public Initializer(MongoDatabase database)
 		{
 			_database = database;

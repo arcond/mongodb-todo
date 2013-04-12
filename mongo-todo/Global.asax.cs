@@ -1,6 +1,6 @@
-﻿using Domain.Repository;
-using MongoDB.Bson;
-using Newtonsoft.Json.Serialization;
+﻿using Newtonsoft.Json.Serialization;
+using System.Net.Http.Formatting;
+using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -10,7 +10,7 @@ namespace mongo_todo
 {
 	// Note: For instructions on enabling IIS6 or IIS7 classic mode, 
 	// visit http://go.microsoft.com/?LinkId=9394801
-	public class MvcApplication :System.Web.HttpApplication
+	public class MvcApplication :HttpApplication
 	{
 		protected void Application_Start()
 		{
@@ -22,12 +22,14 @@ namespace mongo_todo
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 			AutoMapperConfig.RegisterMaps();
 
-			var formatters = GlobalConfiguration.Configuration.Formatters;
-			var xmlFormatter = formatters.XmlFormatter;
+			MediaTypeFormatterCollection formatters =
+				GlobalConfiguration.Configuration.Formatters;
+			XmlMediaTypeFormatter xmlFormatter = formatters.XmlFormatter;
 			formatters.Remove(xmlFormatter);
 
-			var jsonFormatter = formatters.JsonFormatter;
-			jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+			JsonMediaTypeFormatter jsonFormatter = formatters.JsonFormatter;
+			jsonFormatter.SerializerSettings.ContractResolver =
+				new CamelCasePropertyNamesContractResolver();
 
 			Bootstrapper.Initialise();
 		}
