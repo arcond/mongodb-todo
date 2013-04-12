@@ -57,7 +57,7 @@ namespace Domain
 			var task = GetTask(id);
 			if (
 				!task.Description.Equals(
-										 description, StringComparison.CurrentCultureIgnoreCase))
+					description, StringComparison.CurrentCultureIgnoreCase))
 				task.SetDescription(description);
 
 			if (task.Completed != completed) task.Toggle();

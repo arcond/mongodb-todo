@@ -7,19 +7,17 @@ namespace mongo_todo
 		public static void Register(HttpConfiguration config)
 		{
 			config.Routes.MapHttpRoute(
-									   "ActionApi",
-									   "api/{controller}/{id}",
-									   new {
-										   id = RouteParameter.Optional
-									   }
-				);
+				"ActionApi",
+				"api/{controller}/{id}",
+				new {
+					id = RouteParameter.Optional
+				});
 			config.Routes.MapHttpRoute(
-									   "TaskApi",
-									   "api/users/{userId}/{controller}/{id}",
-									   new {
-										   id = RouteParameter.Optional
-									   }
-				);
+				"TaskApi",
+				"api/users/{userId}/{controller}/{id}",
+				new {
+					id = RouteParameter.Optional
+				});
 		}
 	}
 }

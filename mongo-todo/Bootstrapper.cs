@@ -18,16 +18,16 @@ namespace mongo_todo
 	{
 		public static void Initialise()
 		{
-			IUnityContainer container = BuildUnityContainer();
+			var container = BuildUnityContainer();
 
 			GlobalConfiguration.Configuration.DependencyResolver =
 				new WebApiUnityDependencyResolver(new UnityDependencyResolver(container));
 
 			ServiceLocator.SetLocatorProvider(
-											  () => new UnityServiceLocator(
-														(IUnityContainer)
-														GlobalConfiguration.Configuration.DependencyResolver.GetService(
-																													    typeof(IUnityContainer))));
+				() => new UnityServiceLocator(
+					(IUnityContainer)
+						GlobalConfiguration.Configuration.DependencyResolver.GetService(
+							typeof(IUnityContainer))));
 		}
 
 		private static IUnityContainer BuildUnityContainer()
@@ -63,7 +63,7 @@ namespace mongo_todo
 
 		public override void RemoveValue()
 		{
-			object obj = GetValue();
+			var obj = GetValue();
 			HttpContext.Current.Items.Remove(obj);
 		}
 	}

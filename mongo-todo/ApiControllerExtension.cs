@@ -14,7 +14,7 @@ namespace mongo_todo
 			string relativeLocation)
 		{
 			return GetLinkHeader<T>(
-								    controller, request, response, id, relativeLocation, string.Empty);
+				controller, request, response, id, relativeLocation, string.Empty);
 		}
 
 		public static string GetLinkHeader<T>(
@@ -24,12 +24,12 @@ namespace mongo_todo
 			string relativeLocation)
 		{
 			return GetLinkHeader<T>(
-								    controller,
-									request,
-									response,
-									string.Empty,
-									relativeLocation,
-									string.Empty);
+				controller,
+				request,
+				response,
+				string.Empty,
+				relativeLocation,
+				string.Empty);
 		}
 
 		public static string GetLinkHeader<T>(
@@ -40,21 +40,21 @@ namespace mongo_todo
 			string relativeLocation,
 			string description)
 		{
-			string currentUri = controller.Request.RequestUri.AbsoluteUri;
+			var currentUri = controller.Request.RequestUri.AbsoluteUri;
 			if (!string.IsNullOrEmpty(id))
 				currentUri = string.Concat(currentUri, "/", id);
 
 			var uri = new Uri(string.Concat(currentUri, relativeLocation));
-			string rel = typeof(T).Name;
+			var rel = typeof(T).Name;
 
-			string type = string.Empty;
+			var type = string.Empty;
 			if (response != null
 				&& response.Content != null
 				&& response.Content.Headers != null
 				&& response.Content.Headers.ContentType != null)
 				type = response.Content.Headers.ContentType.MediaType;
 
-			string location = string.Format("<{0}>", uri);
+			var location = string.Format("<{0}>", uri);
 			if (!string.IsNullOrWhiteSpace(rel))
 				location = string.Concat(location, "; rel=", rel);
 
