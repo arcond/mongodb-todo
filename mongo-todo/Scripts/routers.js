@@ -15,7 +15,7 @@
 
       Router.prototype.routes = {
         '': 'root',
-        ':userId': 'tasks'
+        ':userId': 'todos'
       };
 
       Router.prototype.root = function() {
@@ -23,7 +23,7 @@
         this.mainPage.render();
       };
 
-      Router.prototype.tasks = function(userId) {
+      Router.prototype.todos = function(userId) {
         this.mainPage = new Views.MainPage({
           userId: userId
         });

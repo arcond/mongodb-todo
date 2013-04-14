@@ -9,14 +9,14 @@ define [
 	class Router extends Backbone.Router
 		routes:
 			'': 'root'
-			':userId': 'tasks'	
+			':userId': 'todos'	
 
 		root: ->
 			@mainPage = new Views.MainPage
 			@mainPage.render()
 			return
 
-		tasks: (userId) ->
+		todos: (userId) ->
 			@mainPage = new Views.MainPage userId: userId
 			@mainPage.render()
 			return

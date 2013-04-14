@@ -33,15 +33,15 @@ namespace mongo_todo.Controllers
 						_userRepository.GetAll()
 							.Where(
 								x =>
-									x.LastModified.AsDateTime
+									x.Timestamp
 										> Request.Headers.IfModifiedSince);
 					if (users.Any()) {
-						users = users.OrderBy(x => x.LastModified);
+						users = users.OrderBy(x => x.Timestamp);
 						response = Request.CreateResponse(HttpStatusCode.OK);
 						response.Headers.Add(
 							"Last-Modified",
 							users.First()
-								.LastModified.AsDateTime.ToString(
+								.Timestamp.ToString(
 									CultureInfo.InvariantCulture));
 					} else response = Request.CreateResponse(HttpStatusCode.NotModified);
 				} catch (Exception ex) {
@@ -54,10 +54,10 @@ namespace mongo_todo.Controllers
 			response.Headers.Add("Type", typeof(UserModel[]).Name);
 			response.Headers.Add(
 				"Link",
-				this.GetLinkHeader<TaskModel[]>(
+				this.GetLinkHeader<TodoModel[]>(
 					Request,
 					response,
-					"/tasks"));
+					"/todos"));
 			return response;
 		}
 
@@ -67,11 +67,11 @@ namespace mongo_todo.Controllers
 			if (Request.Headers.IfModifiedSince.HasValue) {
 				try {
 					var user = _userRepository.Get(ObjectId.Parse(id));
-					if (user.LastModified.AsDateTime > Request.Headers.IfModifiedSince.Value) {
+					if (user.Timestamp > Request.Headers.IfModifiedSince.Value) {
 						response = Request.CreateResponse(HttpStatusCode.OK);
 						response.Headers.Add(
 							"Last-Modified",
-							user.LastModified.AsDateTime.ToString(
+							user.Timestamp.ToString(
 								CultureInfo.InvariantCulture));
 					}
 				} catch (Exception ex) {
@@ -86,10 +86,10 @@ namespace mongo_todo.Controllers
 			response.Headers.Add("Type", typeof(UserModel).Name);
 			response.Headers.Add(
 				"Link",
-				this.GetLinkHeader<TaskModel[]>(
+				this.GetLinkHeader<TodoModel[]>(
 					Request,
 					response,
-					"/tasks"));
+					"/todos"));
 			return response;
 		}
 
@@ -125,10 +125,10 @@ namespace mongo_todo.Controllers
 				HttpStatusCode.OK, user);
 			response.Headers.Add(
 				"Link",
-				this.GetLinkHeader<TaskModel[]>(
+				this.GetLinkHeader<TodoModel[]>(
 					Request,
 					response,
-					"/tasks"));
+					"/todos"));
 			response.Headers.Add("Type", typeof(UserModel).Name);
 			return response;
 		}
@@ -149,10 +149,10 @@ namespace mongo_todo.Controllers
 			var response = Request.CreateResponse(HttpStatusCode.OK);
 			response.Headers.Add(
 				"Link",
-				this.GetLinkHeader<TaskModel[]>(
+				this.GetLinkHeader<TodoModel[]>(
 					Request,
 					response,
-					"/tasks"));
+					"/todos"));
 			response.Headers.Add("Type", typeof(UserModel).Name);
 			return response;
 		}
@@ -174,11 +174,11 @@ namespace mongo_todo.Controllers
 					string.Format("{0}/{1}", Request.RequestUri.AbsoluteUri, newUser.Id));
 			response.Headers.Add(
 				"Link",
-				this.GetLinkHeader<TaskModel[]>(
+				this.GetLinkHeader<TodoModel[]>(
 					Request,
 					response,
 					newUser.Id.ToString(),
-					"/tasks"));
+					"/todos"));
 			response.Headers.Add("Type", typeof(UserModel).Name);
 			return response;
 		}
@@ -204,10 +204,10 @@ namespace mongo_todo.Controllers
 			var response = Request.CreateResponse(HttpStatusCode.OK);
 			response.Headers.Add(
 				"Link",
-				this.GetLinkHeader<TaskModel[]>(
+				this.GetLinkHeader<TodoModel[]>(
 					Request,
 					response,
-					"/tasks"));
+					"/todos"));
 			response.Headers.Add("Type", typeof(UserModel).Name);
 			return response;
 		}

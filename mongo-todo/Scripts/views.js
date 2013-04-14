@@ -90,7 +90,7 @@
         var _this = this;
         this.todos.each(function(todoModel) {
           var view;
-          todoModel.urlRoot = _this.user.references.TaskModels;
+          todoModel.urlRoot = _this.user.references.TodoModels;
           view = new TodoView({
             model: todoModel
           });
@@ -104,7 +104,7 @@
         var newTodo, view,
           _this = this;
         newTodo = new Models.Todo({
-          urlRoot: this.user.references.TaskModels
+          urlRoot: this.user.references.TodoModels
         });
         this.listenTo(newTodo, 'change:id', function() {
           _this.todos.add(newTodo);
@@ -148,8 +148,8 @@
 
       MainPage.prototype.setTodos = function() {
         var _ref, _ref1;
-        if ((_ref = this.user) != null ? (_ref1 = _ref.references) != null ? _ref1.TaskModels : void 0 : void 0) {
-          this.todos.url = this.user.references.TaskModels;
+        if ((_ref = this.user) != null ? (_ref1 = _ref.references) != null ? _ref1.TodoModels : void 0 : void 0) {
+          this.todos.url = this.user.references.TodoModels;
           this.todos.fetch();
         }
       };
@@ -324,8 +324,8 @@
         'keyup input.description': 'updateDescription',
         'click input[type=checkbox]': 'toggleComplete',
         'keyup input[type=checkbox]': 'toggleComplete',
-        'click .add-task': 'addTask',
-        'click .remove-task': 'removeTask'
+        'click .add-todo': 'addTodo',
+        'click .remove-todo': 'removeTodo'
       };
 
       TodoView.prototype.initialize = function(options) {
@@ -343,11 +343,11 @@
         this.model.updateDescription($(ev.target).val());
       };
 
-      TodoView.prototype.addTask = function() {
+      TodoView.prototype.addTodo = function() {
         this.model.save();
       };
 
-      TodoView.prototype.removeTask = function() {
+      TodoView.prototype.removeTodo = function() {
         this.model.destroy();
       };
 

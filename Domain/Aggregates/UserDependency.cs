@@ -3,13 +3,13 @@
 	public class UserDependency :IUserDependency
 	{
 		public UserDependency(
-			ITaskFactory taskFactory, ITaskRepository taskRepository)
+			ITodoFactory todoFactory, ITodoRepository todoRepository)
 		{
-			TaskFactory = taskFactory;
-			TaskRepository = taskRepository;
+			TodoFactory = todoFactory;
+			TodoRepository = todoRepository;
 		}
 
-		public ITaskFactory TaskFactory { get; private set; }
-		public ITaskRepository TaskRepository { get; private set; }
+		public ITodoFactory TodoFactory { get; private set; }
+		public ITodoRepository TodoRepository { get; private set; }
 	}
 }

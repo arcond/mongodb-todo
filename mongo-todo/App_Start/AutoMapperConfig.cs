@@ -8,10 +8,10 @@ namespace mongo_todo
 	{
 		public static void RegisterMaps()
 		{
-			Mapper.CreateMap<Task, TaskModel>()
+			Mapper.CreateMap<ITodo, TodoModel>()
 				.ForMember(x => x.Id, x => x.MapFrom(y => y.Id.ToString()));
 
-			Mapper.CreateMap<User, UserModel>()
+			Mapper.CreateMap<IUser, UserModel>()
 				.ForMember(x => x.Id, x => x.MapFrom(y => y.Id.ToString()));
 		}
 	}

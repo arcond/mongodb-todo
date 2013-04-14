@@ -2,6 +2,6 @@
 {
 	public interface IUserFactory
 	{
-		User CreateUser(string name);
+		IUser CreateUser(string name);
 	}
 }

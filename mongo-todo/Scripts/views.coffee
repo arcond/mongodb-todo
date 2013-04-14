@@ -66,7 +66,7 @@ define [
 
 		renderTodo: ->
 			@todos.each (todoModel) =>
-				todoModel.urlRoot = @user.references.TaskModels
+				todoModel.urlRoot = @user.references.TodoModels
 				view = new TodoView model: todoModel
 				@$el.find('ul.todos').append view.render().el
 				return
@@ -74,7 +74,7 @@ define [
 			@
 
 		renderNewTodo: ->
-			newTodo = new Models.Todo urlRoot: @user.references.TaskModels
+			newTodo = new Models.Todo urlRoot: @user.references.TodoModels
 			@listenTo newTodo, 'change:id', =>
 				@todos.add newTodo
 				return
@@ -107,8 +107,8 @@ define [
 			return
 
 		setTodos: ->
-			if @user?.references?.TaskModels
-				@todos.url = @user.references.TaskModels
+			if @user?.references?.TodoModels
+				@todos.url = @user.references.TodoModels
 				@todos.fetch()
 			return
 
@@ -208,8 +208,8 @@ define [
 			'keyup input.description': 'updateDescription'
 			'click input[type=checkbox]': 'toggleComplete'
 			'keyup input[type=checkbox]': 'toggleComplete'
-			'click .add-task': 'addTask'
-			'click .remove-task': 'removeTask'
+			'click .add-todo': 'addTodo'
+			'click .remove-todo': 'removeTodo'
 
 		initialize: (options) ->
 			@listenTo @model, 'change:completed', @render
@@ -224,11 +224,11 @@ define [
 			@model.updateDescription $(ev.target).val()
 			return
 
-		addTask: ->
+		addTodo: ->
 			@model.save()
 			return
 
-		removeTask: ->
+		removeTodo: ->
 			@model.destroy()
 			return
 

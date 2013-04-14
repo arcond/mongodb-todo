@@ -1,60 +1,51 @@
-﻿using Domain.Aggregates;
+﻿using System;
+using System.Linq;
+using Domain.Aggregates;
 using Domain.Model;
 using Microsoft.Practices.Unity;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Domain
 {
-	public class User :MongoDbModel
+	public class User :DomainModel, IUser
 	{
-		//private readonly UnityContainer _container;
 		public User()
 		{
-			Tasks = new List<ObjectId>();
 			this.ResolveDependency();
 		}
 
-		public string Name { get; internal set; }
-
-		[BsonElement]
-		internal IList<ObjectId> Tasks { get; set; }
-
-		[Dependency, BsonIgnore]
+		[Dependency]
 		public IUserDependency Dependency { get; set; }
+
+		public string Name { get; internal set; }
 
 		public void SetName(string name)
 		{
-			LastModified = BsonDateTime.Create(DateTime.UtcNow);
+			Timestamp = DateTime.UtcNow;
 			Name = name;
 		}
 
-		public Task[] GetTasks()
+		public ITodo[] GetTodos()
 		{
-			return Dependency.TaskRepository.GetAll(this.Id).ToArray();
+			return Dependency.TodoRepository.GetAll(this.Id).ToArray();
 		}
 
-		public Task GetTask(ObjectId id)
+		public ITodo GetTodo(object id)
 		{
-			return Dependency.TaskRepository.Get(id);
+			return Dependency.TodoRepository.Get(id);
 		}
 
-		public Task AddTask(string description)
+		public virtual ITodo AddTodo(string description)
 		{
-			var task = Dependency.TaskFactory.CreateTask(this.Id, description);
-			Dependency.TaskRepository.Add(task);
-			Tasks.Add(task.Id);
-			LastModified = BsonDateTime.Create(DateTime.UtcNow);
+			var task = Dependency.TodoFactory.CreateTodo(this.Id, description);
+			Dependency.TodoRepository.Add(task);
+			Timestamp = DateTime.UtcNow;
 
 			return task;
 		}
 
-		public void UpdateTask(ObjectId id, string description, bool completed)
+		public void UpdateTodo(object id, string description, bool completed)
 		{
-			var task = GetTask(id);
+			var task = GetTodo(id);
 			if (
 				!task.Description.Equals(
 					description, StringComparison.CurrentCultureIgnoreCase))
@@ -62,48 +53,47 @@ namespace Domain
 
 			if (task.Completed != completed) task.Toggle();
 
-			Dependency.TaskRepository.Update(task);
-			LastModified = BsonDateTime.Create(DateTime.UtcNow);
+			Dependency.TodoRepository.Update(task);
+			Timestamp = DateTime.UtcNow;
 		}
 
-		public void RemoveTask(ObjectId id)
+		public virtual void RemoveTodo(object id)
 		{
-			if (Tasks.Contains(id)) Tasks.Remove(id);
-			Dependency.TaskRepository.Delete(id);
-			LastModified = BsonDateTime.Create(DateTime.UtcNow);
+			Dependency.TodoRepository.Delete(id);
+			Timestamp = DateTime.UtcNow;
 		}
 
-		public void SetTasks(Task[] todos)
+		public void SetTodos(ITodo[] todos)
 		{
 			if (todos == null
-				|| todos.Any(x => x.Id == null || x.Id.Equals(ObjectId.Empty))) {
+				|| todos.Any(x => x.Id == null)) {
 				throw new ArgumentNullException(
 					"todos",
-					"Cannot add new tasks with no or default ID, please use the AddTask method first.");
+					"Cannot add new tasks with no or default ID, please use the AddTodo method first.");
 			}
 
-			if (!todos.Any(x => x.UserId.Equals(Id) || x.UserId.Equals(ObjectId.Empty)))
+			if (!todos.Any(x => x.UserId.Equals(Id)))
 				throw new ArgumentException("Cannot add tasks that belong to another user");
 
-			RemoveAllTasks();
-			AddTasks(todos);
-			LastModified = BsonDateTime.Create(DateTime.Now);
+			RemoveAllTodos();
+			AddTodos(todos);
+			Timestamp = DateTime.Now;
 		}
 
-		private void RemoveAllTasks()
+		public void RemoveAllTodos()
 		{
-			foreach (var todoId in Tasks) {
-				Tasks.Remove(todoId);
-				Dependency.TaskRepository.Delete(todoId);
-			}
+			foreach (var todo in GetTodos()) Dependency.TodoRepository.Delete(todo.Id);
 		}
 
-		private void AddTasks(Task[] todos)
+		public void AddTodos(ITodo[] todos)
 		{
-			foreach (var todo in todos) {
-				Dependency.TaskRepository.Add(todo);
-				Tasks.Add(todo.Id);
-			}
+			foreach (var todo in todos) Dependency.TodoRepository.Add(todo);
+		}
+
+		public void ChangeId(object newId)
+		{
+			Timestamp = DateTime.UtcNow;
+			Id = newId;
 		}
 	}
 }

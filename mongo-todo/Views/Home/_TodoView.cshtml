@@ -5,13 +5,13 @@
 	{{#if completed}}
 	<span class="description"><del>{{description}}</del></span>
 	{{else}}
-	<input class="description" value="{{description}}" placeholder="{{#if description}}{{description}}{{else}}Task...{{/if}}" />
+	<input class="description" value="{{description}}" placeholder="{{#if description}}{{description}}{{else}}Todo...{{/if}}" />
 	{{/if}}
 </div>
 <div class="span1">
 	{{#if completed}}
-	<i class="remove-task icon-remove-sign icon"></i>
+	<i class="remove-todo icon-remove-sign icon"></i>
 	{{else}}
-	{{#unless id}}<i class="add-task icon-plus-sign icon"></i>{{/unless}}
+	{{#unless id}}<i class="add-todo icon-plus-sign icon"></i>{{/unless}}
 	{{/if}}
 </div>

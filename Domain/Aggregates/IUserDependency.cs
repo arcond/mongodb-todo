@@ -2,7 +2,7 @@
 {
 	public interface IUserDependency
 	{
-		ITaskFactory TaskFactory { get; }
-		ITaskRepository TaskRepository { get; }
+		ITodoFactory TodoFactory { get; }
+		ITodoRepository TodoRepository { get; }
 	}
 }

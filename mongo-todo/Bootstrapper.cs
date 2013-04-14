@@ -1,10 +1,12 @@
+
 using Domain;
 using Domain.Aggregates;
-using Domain.Data;
-using Domain.Factory;
-using Domain.Repository;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
+using MongoData;
+using MongoData.Data;
+using MongoData.Factory;
+using MongoData.Repository;
 using System;
 using System.Collections.Generic;
 using System.Web;
@@ -35,10 +37,10 @@ namespace mongo_todo
 			var container = new UnityContainer();
 
 			container
-				.RegisterType<IUserRepository, UserRepository>()
-				.RegisterType<ITaskRepository, TaskRepository>()
-				.RegisterType<IUserFactory, UserFactory>()
-				.RegisterType<ITaskFactory, TaskFactory>()
+				.RegisterType<IUserRepository, MongoDbUserRepository>()
+				.RegisterType<ITodoRepository, MongoDbTodoRepository>()
+				.RegisterType<IUserFactory, MongoDbUserFactory>()
+				.RegisterType<ITodoFactory, MongoDbTodoFactory>()
 				.RegisterType<IContext, Context>()
 				.RegisterType<IUserDependency, UserDependency>()
 				;
