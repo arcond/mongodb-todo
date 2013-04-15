@@ -74,7 +74,7 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.5.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -243,29 +243,33 @@
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
     <Content Include="Global.asax" />
-    <Content Include="App_Readme\Handlebarsjs_README.md" />
-    <Content Include="App_Readme\Handlebarsjs_LICENSE" />
     <Content Include="Scripts\app.coffee" />
+    <Content Include="Scripts\lib\backbone.js" />
+    <Content Include="Scripts\lib\backbone.min.js" />
     <Content Include="Scripts\backbone.rest.coffee" />
     <Content Include="Content\font\fontawesome-webfont.woff" />
     <Content Include="Content\font\fontawesome-webfont.ttf" />
     <Content Include="Content\font\fontawesome-webfont.eot" />
     <Content Include="Content\font\FontAwesome.otf" />
+    <Content Include="App_Readme\Handlebarsjs_README.md" />
+    <Content Include="App_Readme\Handlebarsjs_LICENSE" />
     <None Include="BundleTransformer.Configuration.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Scripts\lib\jquery-1.9.0.intellisense.js" />
+    <None Include="Scripts\lib\jquery-1.9.1.intellisense.js" />
+    <Content Include="Scripts\lib\bootstrap.js" />
+    <Content Include="Scripts\lib\bootstrap.min.js" />
+    <Content Include="Scripts\lib\handlebars.js" />
+    <Content Include="Scripts\lib\handlebars.min.js" />
+    <Content Include="Scripts\lib\handlebars.runtime.js" />
+    <Content Include="Scripts\lib\jquery-1.9.1.js" />
+    <Content Include="Scripts\lib\jquery-1.9.1.min.js" />
+    <Content Include="Scripts\lib\jquery-1.9.1.min.map" />
     <Content Include="Scripts\backbone.rest.js">
       <DependentUpon>backbone.rest.coffee</DependentUpon>
     </Content>
-    <Content Include="Scripts\lib\backbone.js" />
-    <Content Include="Scripts\lib\backbone.min.js" />
-    <Content Include="Scripts\lib\jquery-1.9.0.js" />
-    <Content Include="Scripts\lib\jquery-1.9.0.min.js" />
-    <Content Include="Scripts\lib\jquery-ui-1.10.0.js" />
-    <Content Include="Scripts\lib\jquery-ui-1.10.0.min.js" />
-    <Content Include="Scripts\lib\bootstrap.js" />
-    <Content Include="Scripts\lib\bootstrap.min.js" />
+    <Content Include="Scripts\lib\jquery-ui-1.10.2.js" />
+    <Content Include="Scripts\lib\jquery-ui-1.10.2.min.js" />
     <Content Include="Scripts\collections.coffee" />
     <Content Include="Scripts\extensions.coffee">
       <Compile>True</Compile>
@@ -273,8 +277,6 @@
       <Bare>False</Bare>
       <Iced>False</Iced>
     </Content>
-    <Content Include="Scripts\lib\jquery-1.9.0.min.map" />
-    <None Include="Scripts\lib\amplify-vsdoc.js" />
     <Content Include="App_Readme\Require.JS - LICENSE.txt" />
     <Content Include="Scripts\app.js">
       <DependentUpon>app.coffee</DependentUpon>
@@ -288,11 +290,7 @@
     <Content Include="Scripts\lib\cs.js" />
     <Content Include="Scripts\lib\domReady.js" />
     <Content Include="Scripts\lib\i18n.js" />
-    <Content Include="Scripts\lib\amplify.js" />
-    <Content Include="Scripts\lib\amplify.min.js" />
     <Content Include="App_Readme\GPL-LICENSE.txt" />
-    <Content Include="Scripts\lib\handlebars.js" />
-    <Content Include="Scripts\lib\handlebars.runtime.js" />
     <Content Include="App_Readme\MIT-LICENSE.txt" />
     <Content Include="Scripts\lib\modernizr-2.6.2.js" />
     <Content Include="App_Readme\README.txt" />

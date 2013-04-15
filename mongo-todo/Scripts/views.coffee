@@ -40,7 +40,7 @@ define [
 			super options
 
 		render: ->
-			@users.fetch()
+			@users.fetch({reset: true})
 			@
 
 		renderToolbar: ->
@@ -96,10 +96,10 @@ define [
 					@listenTo @user, 'change:id', =>
 						@users.add @user
 						@userId = @user.id
-						Backbone.history.navigate "##{@userId}", false
+						Backbone.history.navigate "##{@userId}", true
 						return
 				else 
-					xhr = @user.fetch()
+					xhr = @user.fetch({reset: true})
 					xhr.done =>
 						@toolbarView.setUser @user.id if @toolbarView
 						Backbone.history.navigate "##{@user.id}", false
@@ -109,7 +109,7 @@ define [
 		setTodos: ->
 			if @user?.references?.TodoModels
 				@todos.url = @user.references.TodoModels
-				@todos.fetch()
+				@todos.fetch({reset: true})
 			return
 
 	class ToolbarView extends Backbone.View

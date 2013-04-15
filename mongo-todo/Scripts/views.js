@@ -56,7 +56,9 @@
       };
 
       MainPage.prototype.render = function() {
-        this.users.fetch();
+        this.users.fetch({
+          reset: true
+        });
         return this;
       };
 
@@ -132,10 +134,12 @@
             this.listenTo(this.user, 'change:id', function() {
               _this.users.add(_this.user);
               _this.userId = _this.user.id;
-              Backbone.history.navigate("#" + _this.userId, false);
+              Backbone.history.navigate("#" + _this.userId, true);
             });
           } else {
-            xhr = this.user.fetch();
+            xhr = this.user.fetch({
+              reset: true
+            });
             xhr.done(function() {
               if (_this.toolbarView) {
                 _this.toolbarView.setUser(_this.user.id);
@@ -150,7 +154,9 @@
         var _ref, _ref1;
         if ((_ref = this.user) != null ? (_ref1 = _ref.references) != null ? _ref1.TodoModels : void 0 : void 0) {
           this.todos.url = this.user.references.TodoModels;
-          this.todos.fetch();
+          this.todos.fetch({
+            reset: true
+          });
         }
       };
 
