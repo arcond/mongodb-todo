@@ -5,7 +5,7 @@ define [
 ], (_, Backbone, Models) ->
 	class BaseCollection extends Backbone.Collection
 		save: (options) ->
-			@update @models, options
+			@set @models, options
 			method = if options?.force then 'update' else 'patch'
 			xhr = @sync method, @, options
 			xhr
